@@ -4,48 +4,64 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.Serial;
-//import java.io.Serializable;
+import java.util.ArrayList;
+
 
 public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
-    @Serial
     private static final long serialVersionUID = 6106269076155338045L;
 
-    //game objects
+    //Hero Vars
     private Hero heroAlpha;//Hero object
-
-
-
-    //create graphic using Label
     private JLabel heroLabel;
     private ImageIcon heroImage;
 
+    //Enemy One
+    private Goblin goblin1;
+    private JLabel goblin1Label;
+    private ImageIcon goblin1Image;
+
+    private JButton HideTardisButton, AnimateButton;
 
     //Container to hold graphics
     private Container content;
 
-    //arrow
-    private Arrow myArrow; //arrow projectile object
-    private JLabel arrowLabel;
-    private ImageIcon arrowImage;
-    int arrowDirection = 0;
+    //ARROW STUFF
+    ArrayList<Arrow> heroArrows = new ArrayList<Arrow>();
 
-    //game prep constructor
+    //GAME PREP CONSTRUCTOR
     public GamePrep() {
         super("Dungeon Crawler Game");
         setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);
         setResizable(false);
 
-
-        //create hero and add to content pane
+        //create hero
         heroAlpha = new Hero();//creates hero
         heroLabel = new JLabel();//creates a label to hold hero img
         heroImage = new ImageIcon(getClass().getResource(heroAlpha.getFilename()));
         heroLabel.setIcon(heroImage);//set hero img to label
         heroLabel.setSize(heroAlpha.getWidth(), heroAlpha.getHeight());// set size of the label
 
-        //create game window
+        //create 1st enemy
+        goblin1 = new Goblin();
+        goblin1Label = new JLabel();
+        goblin1Image = new ImageIcon(getClass().getResource(goblin1.getFilename()));
+        goblin1Label.setIcon(goblin1Image);
+        goblin1Label.setSize(goblin1.getWidth(), goblin1.getHeight());
+        goblin1.setGoblinLabel(goblin1Label);// this passes in label into goblin1 object
+        goblin1.setHeroAlpha(heroAlpha); //this passes heroAlpha into goblin1 object
+        goblin1.setHeroAlphaLabel(heroLabel);// this passes heroAlpha label into goblin 1
+
+        AnimateButton = new JButton("Run");
+        AnimateButton.setSize(100, 50);
+        AnimateButton.setLocation(GameProperties.SCREEN_WIDTH - 120, GameProperties.SCREEN_HEIGHT - 155);
+        add(AnimateButton);
+        AnimateButton.addActionListener(this);
+        AnimateButton.setFocusable(false);
+        goblin1.setAnimationButton(AnimateButton);
+
+
+        //create Game window
         content = getContentPane();
         content.setBackground(Color.gray);
         setLayout(null);
@@ -53,21 +69,17 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         //coordinates for the hero
         heroAlpha.setX(0);
         heroAlpha.setY(100);
-
-        //add hero label to game window
         add(heroLabel);
-
-        //set coordinates for hero label
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
 
+        //ADD Goblin1
+        add(goblin1Label);
+        goblin1Label.setLocation(goblin1.getX(), goblin1.getY());
 
+
+        //add key listener and focus window to move chars
         content.addKeyListener(this); //add a key listener
         content.setFocusable(true);//add focus
-
-        //test space
-//        int dx = heroAlpha.getX();
-//        int dy = heroAlpha.getY();
-//        int arrowDirection = 0;
 
         //handle closing of program window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,175 +93,85 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
     }
 
-    //arrow function one
-//    public void launchArrow(int dx, int dy, int arrowDirection) {
-//        myArrow = new Arrow(16,16);
-//        myArrow = new Arrow(16,16);//creates hero
-//        arrowLabel = new JLabel();//creates a label to hold hero img
-//        arrowImage = new ImageIcon(getClass().getResource(myArrow.getFilename()));
-//        arrowLabel.setIcon(arrowImage);//set hero img to label
-//        arrowLabel.setSize(myArrow.getWidth(), myArrow.getHeight());// set size of the label
-//
-//        //coordinates for hero taken from hero position
-//        myArrow.setX(dx);
-//        myArrow.setY(dy);
-//
-//        //add hero label to game window
-//        add(arrowLabel);
-//
-//        //set coordinates for hero label
-//        arrowLabel.setLocation(myArrow.getX(), myArrow.getY());
-//
-//        //
-//        int x = myArrow.getX();
-//        int y = myArrow.getY();
-//
-//
-//        //arrow movement
-//        if (arrowDirection == 1) {
-//
-//        } else if (arrowDirection == 2) {
-//            System.out.println("down arrow");
-//        } else if(arrowDirection == 3)  {
-//            System.out.println("arrow left");
-//        }else if(arrowDirection == 4)  {
-////            arrowLabel.setIcon(new ImageIcon(getClass().getResource("arrowRight_133x48.png")));
-////            arrowLabel.setSize(133,48);
-////            arrowLabel.setLocation(myArrow.getX(), myArrow.getY());
-////            System.out.println("arrow right");
-//////            x += GameProperties.CHARACTER_STEP;
-//////           for(int i = x; i < x; i = i + GameProperties.CHARACTER_STEP){
-//////                myArrow.setX(i);
-//////            }
-//
-//
-//            do {
-//                x += GameProperties.CHARACTER_STEP;
-//                System.out.println("do"+ x);
-//
-//                arrowLabel.setSize(133,48);
-//                arrowLabel.setLocation(myArrow.getX(), myArrow.getY());
-//                arrowLabel.setIcon(new ImageIcon(getClass().getResource("arrowRight_133x48.png")));
-//                System.out.println("arrow right");
-//            }
-//            while (x < GameProperties.SCREEN_WIDTH);
-//        } else {
-//            System.out.println("arrow nones  "+arrowDirection);
-//        }
-//
-//
-//    }
-
-    //arrow function 2
-    public void launchArrow(int dx, int dy, int arrowDirection) {
-        myArrow = new Arrow(16,16);
-        myArrow = new Arrow(16,16);//creates hero
-        arrowLabel = new JLabel();//creates a label to hold hero img
-        arrowImage = new ImageIcon(getClass().getResource(myArrow.getFilename()));
-        arrowLabel.setIcon(arrowImage);//set hero img to label
-        arrowLabel.setSize(myArrow.getWidth(), myArrow.getHeight());// set size of the label
-
-        //coordinates for hero taken from hero position
-        myArrow.setX(dx);
-        myArrow.setY(dy);
-
-        //add hero label to game window
-        add(arrowLabel);
-
-        //set coordinates for hero label
-        arrowLabel.setLocation(myArrow.getX(), myArrow.getY());
-
-        //
-        int x = myArrow.getX();
-        int y = myArrow.getY();
-
-
-        //arrow movement
-        if (arrowDirection == 1) {
-
-        } else if (arrowDirection == 2) {
-            System.out.println("down arrow");
-        } else if(arrowDirection == 3)  {
-            System.out.println("arrow left");
-        }else if(arrowDirection == 4)  {
-            arrowLabel.setIcon(new ImageIcon(getClass().getResource("arrowRight_133x48.png")));
-            arrowLabel.setSize(133,48);
-            arrowLabel.setLocation(myArrow.getX(), myArrow.getY());
-            System.out.println("arrow right");
-            x += GameProperties.CHARACTER_STEP;
-           for(int i = x; i < x; i = i + GameProperties.CHARACTER_STEP){
-                myArrow.setX(i);
-            }
-
-
-            do {
-                x += GameProperties.CHARACTER_STEP;
-                System.out.println("do"+ x);
-
-                arrowLabel.setSize(133,48);
-                arrowLabel.setLocation(myArrow.getX(), myArrow.getY());
-                arrowLabel.setIcon(new ImageIcon(getClass().getResource("arrowRight_133x48.png")));
-                System.out.println("arrow right");
-            }
-            while (x < GameProperties.SCREEN_WIDTH);
-        } else {
-            System.out.println("arrow nones  "+arrowDirection);
-        }
-
-
-    }
-
     public void keyTyped(KeyEvent e) {
     }
 
-
+    //GAME CONTROLLERS
     public void keyPressed(KeyEvent e) {
         int dx = heroAlpha.getX();
         int dy = heroAlpha.getY();
-//        int arrowDirection = 0;
+        int direction = heroAlpha.getDirection();
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             heroLabel.setIcon(new ImageIcon(getClass().getResource("heroUp-32x48.png")));
-            arrowDirection=1;
-            System.out.println(arrowDirection);
+            heroAlpha.setDirection(1);
             dy -= GameProperties.CHARACTER_STEP;
+
             if (dy + heroAlpha.getHeight() < 0) {
                 dy = GameProperties.SCREEN_HEIGHT;
             }
-            
+
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             heroLabel.setIcon(new ImageIcon(getClass().getResource("heroDown_32x48.png")));
-            arrowDirection=2;
+            heroAlpha.setDirection(2);
+
             dy += GameProperties.CHARACTER_STEP;
             if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             heroLabel.setIcon(new ImageIcon(getClass().getResource("heroLeft_32x48.png")));
-            arrowDirection=3;
+            heroAlpha.setDirection(3);
+
             dx -= GameProperties.CHARACTER_STEP;
             if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
+
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             heroLabel.setIcon(new ImageIcon(getClass().getResource("heroRight_32x48.png")));
-            arrowDirection=4;
+            heroAlpha.setDirection(4);
             dx += GameProperties.CHARACTER_STEP;
             if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
         }
 
-         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            launchArrow(dx,dy, arrowDirection );
-//             System.out.println(arrowDirection);
-            //know direction of hero set shoot direction
-            //launch projectile
+        // SPACE BAR
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+//             heroAlpha.fireArrow(dx,dy,direction); // create arrows using Hero
+            //             heroArrows = heroAlpha.getArr_arrowsFlying();
+//             Arrow myArrow = new Arrow(dx,dy,direction);
+//             heroArrows.add(myArrow);
+//             System.out.println(heroArrows);
+
+
+            //show hero in mermory
+//             System.out.println(heroAlpha);
+//             goblin1.showHeroMemory();
+//             test(dx,dy,direction);
         }
+
+        // THING CHECKER
+        if (e.getKeyCode() == KeyEvent.VK_Z) {
+//            System.out.println(heroArrows);
+//            System.out.println(heroArrows.get(0).filename);//check attribute of object in arraylist
+//            goblin1.moveGoblin();
+
+
+        }
+
 
         heroAlpha.setX(dx);
         heroAlpha.setY(dy);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
     }
 
+    private void test(int x, int y, int d) {
+        heroAlpha.attack(x, y, d);
+        System.out.println(heroAlpha.getFilename());
+
+    }
+
+
     public void keyReleased(KeyEvent e) {
     }
 
     public void actionPerformed(ActionEvent e) {
-
+        goblin1.moveGoblin();
     }
 }
