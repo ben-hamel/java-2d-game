@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class GamePrep extends JFrame implements ActionListener, KeyListener {
@@ -42,6 +45,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
     //ARROW STUFF
 //    ArrayList<Arrow> heroArrows = new ArrayList<Arrow>();
 
+    //Walls
+    ArrayList<Wall> arr_WallList = new ArrayList<>();
+
     //GAME PREP CONSTRUCTOR
     public GamePrep() {
         super("Dungeon Crawler Game");
@@ -73,9 +79,34 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         //HERO ALPHA COORDINATES ON SCREEN
         heroAlpha.setX(0);
-        heroAlpha.setY(100);
+        heroAlpha.setY(300);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
         add(heroLabel);
+
+        //------ WALL STUFF
+        //---- Loop Through Walls to Build Level
+        for (int i = 0; i < GameProperties.arr_WallCoordinates.length; i++) {
+            int x = LevelOneData.arr_WallCoordinates[i][0];
+            int y = LevelOneData.arr_WallCoordinates[i][1];
+
+            //--- create wall with coordinate from loop
+            Wall wall = new Wall(x, y);
+
+            //----ADD Walls to JLabel
+            JLabel wallLabel = new JLabel();
+            ImageIcon wallImage = new ImageIcon(getClass().getResource(wall.getFilename()));
+            wallLabel.setIcon(wallImage);
+            wallLabel.setSize(wall.getWidth(), wall.getHeight());
+            wall.setHeroAlpha(heroAlpha);
+            wallLabel.setLocation(x, y);
+            add(wallLabel);
+
+        }
+
+        //Wall Array
+//        Wall myWall = new Wall();
+//        arr_WallList.add(myWall);
+//        arr_WallList.add(new Wall());
 
 
         //ENEMY ONE
@@ -92,7 +123,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         add(goblinAlphaLabel);
 
         //ADD GoblinBeta
-        goblinBeta = new Goblin(0,0);
+        goblinBeta = new Goblin(0, 0);
         goblinBetaLabel = new JLabel();
         goblinBetaImage = new ImageIcon(getClass().getResource(goblinBeta.getFilename()));
         goblinBetaLabel.setIcon(goblinBetaImage);
@@ -106,21 +137,20 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
 
         //ADD Walls
-        wall1 = new Wall();
-        wall1Label = new JLabel();
-        wall1Image = new ImageIcon(getClass().getResource(wall1.getFilename()));
-        wall1Label.setIcon(wall1Image);
-        wall1Label.setSize(wall1.getWidth(), wall1.getHeight());
-
-        wall1.setHeroAlpha(heroAlpha); //this passes heroAlpha into goblin1 object
-        wall1.setX(200);
-        wall1.setY(200);
-        wall1Label.setLocation(200, 200);
-
-//        wall1.setX(wall1Label.getLocation().x);
-//        wall1.setY(wall1Label.getLocation().y);
-        add(wall1Label);
-
+//        wall1 = new Wall();
+//        wall1Label = new JLabel();
+//        wall1Image = new ImageIcon(getClass().getResource(wall1.getFilename()));
+//        wall1Label.setIcon(wall1Image);
+//        wall1Label.setSize(wall1.getWidth(), wall1.getHeight());
+//
+//        wall1.setHeroAlpha(heroAlpha); //this passes heroAlpha into goblin1 object
+//        wall1.setX(200);
+//        wall1.setY(200);
+//        wall1Label.setLocation(200, 200);
+//
+////        wall1.setX(wall1Label.getLocation().x);
+////        wall1.setY(wall1Label.getLocation().y);
+//        add(wall1Label);
 
 
         //ANIMATE BUTTON STARTS GAME
@@ -206,21 +236,13 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         // THING CHECKER
         if (e.getKeyCode() == KeyEvent.VK_Z) {
-//            System.out.println(heroArrows);
-//            System.out.println(heroArrows.get(0).filename);//check attribute of object in arraylist
-//            goblin1.moveGoblin();
-
-            System.out.println("wall boundry" + wall1.getR());
-            System.out.println("hero boundry " + heroAlpha.getRectangle());
-            System.out.println("hero direction" + heroAlpha.direction);
 
         }
 
-//
-//        heroAlpha.setX(dx);
-//        heroAlpha.setY(dy);
-//        heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
+
     }
+
+
 
 
     public void keyReleased(KeyEvent e) {
@@ -261,8 +283,11 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         heroAlpha.setDirection(1);
 
-        b = wall1.detectHeroCollision();
-
+//        b = arr_WallList.get(0).detectHeroCollision();
+//
+        b = 0;
+//
+//        b = wall1.detectHeroCollision();
 
         if (b == 1 && dr == 1) {
             System.out.println("Wall Boundry!");
@@ -280,7 +305,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
     }
 
     private void walkDown() {
-        boolean test;
+//        boolean test;
         int b;
         int dx = heroAlpha.getX();
         int dy = heroAlpha.getY();
@@ -289,7 +314,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         heroLabel.setIcon(new ImageIcon(getClass().getResource("heroAlpha_Down_30x44.png")));
         heroAlpha.setDirection(2);
 
-        b = wall1.detectHeroCollision();
+//        b = wall1.detectHeroCollision();
+//        b = arr_WallList.get(0).detectHeroCollision();
+        b = 0;
         if (b == 2 && dr == 2) {
             System.out.println("Wall Boundry!");
         } else {
@@ -304,7 +331,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
     }
 
     private void walkLeft() {
-        boolean test;
+//        boolean test;
         int b;
         int dx = heroAlpha.getX();
         int dy = heroAlpha.getY();
@@ -314,7 +341,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         heroAlpha.setDirection(3);
 
-        b = wall1.detectHeroCollision();
+//        b = wall1.detectHeroCollision();
+//        b = arr_WallList.get(0).detectHeroCollision();
+        b = 0;
 
         if (b == 3 && dr == 3) {
             System.out.println("Wall Boundry!");
@@ -340,14 +369,16 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         heroAlpha.setDirection(4);
 
-        b = wall1.detectHeroCollision();
+//        b = wall1.detectHeroCollision();
+//        b = arr_WallList.get(0).detectHeroCollision();
+        b = 0;
 
         if (b == 4 && dr == 4) {
             System.out.println("Wall Boundry!");
         } else {
-            wall1.detectHeroCollision();
+//            wall1.detectHeroCollision();
             dx += GameProperties.CHARACTER_STEP;
-            wall1.detectHeroCollision();
+//            wall1.detectHeroCollision();
             if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
         }
 

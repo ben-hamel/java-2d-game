@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Wall {
     protected int x, y;
@@ -6,6 +7,7 @@ public class Wall {
     protected String filename;
     protected Rectangle r;
     private int test;
+    ArrayList<Wall> arr_ListFromGamePrep;
 
 
     public Wall setX(int x) {
@@ -67,15 +69,14 @@ public class Wall {
         return heroAlpha;
     }
 
-
-    public Wall() {
-        this.x = 0;
-        this.y = 0;
+    // --- WALL CONSTRUCTOR ---
+    public Wall(int x, int y) {
+        this.x = x;
+        this.y = y;
         this.width = 40;
         this.height = 40;
         this.filename = "wallBlock1_40x40.png";
         this.r = new Rectangle(this.x, this.y, this.width, this.height);
-
     }
 
     public int detectHeroCollision() {
