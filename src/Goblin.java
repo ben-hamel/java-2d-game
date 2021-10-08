@@ -8,26 +8,11 @@ public class Goblin extends Sprite implements Runnable {
     private JLabel heroAlphaLabel;
     private JButton animationButton;
     private int direction;
+    private int health;
+    private boolean right;
 
-    public Thread getT() {
-        return t;
-    }
 
-    public Goblin setT(Thread t) {
-        this.t = t;
-        return this;
-    }
-
-    public JButton getAnimationButton() {
-        return animationButton;
-    }
-
-    public Goblin setAnimationButton(JButton animationButton) {
-        this.animationButton = animationButton;
-        return this;
-    }
-
-    //SETTERs and GETTERS
+    //SETTERS and GETTERS
     public Boolean getVisible() {
         return visible;
     }
@@ -73,15 +58,23 @@ public class Goblin extends Sprite implements Runnable {
         return this;
     }
 
-    //GOBLIN CONSTRUCTOR
-    public Goblin() {
-        super(200,0,32, 48, "Goblin_Left_124x138.png");
+    public Thread getT() {
+        return t;
+    }
+
+    public Goblin setT(Thread t) {
+        this.t = t;
+        return this;
     }
 
 
-    public void moveGoblin() {
-        t = new Thread(this, "Goblin Thread");
-        t.start();
+    public JButton getAnimationButton() {
+        return animationButton;
+    }
+
+    public Goblin setAnimationButton(JButton animationButton) {
+        this.animationButton = animationButton;
+        return this;
     }
 
     public int getDirection() {
@@ -93,11 +86,44 @@ public class Goblin extends Sprite implements Runnable {
         return this;
     }
 
+    public int getHealth() {
+        return health;
+    }
+
+    public Goblin setHealth(int health) {
+        this.health = health;
+        return this;
+    }
+
+
+    //GOBLIN CONSTRUCTOR
+    public Goblin() {
+        super(200, 0, 40, 40, "goblinAlpha_Down_40x40.png");
+        health = 100;
+    }
+
+    public Goblin(int newX, int newY) {
+        super(newX, newY, 40, 40, "goblinAlpha_Down_40x40.png");
+        health = 100;
+        if (newX == 0) {
+            setFilename("goblinAlpha_Right_40x40.png");
+
+        }
+    }
+
+
+    //Thread Part 2
+    public void moveGoblin() {
+        t = new Thread(this, "Goblin Thread");
+        t.start();
+    }
+
+    // Thread Part 2
     public void run() {
         this.moving = true;
 
-        GoblinLabel.setIcon(new ImageIcon(getClass().getResource("Goblin_Left_124x138.png")));
-//        DoctorLabel.setIcon(new ImageIcon( getClass().getResource("dw12.png")));
+//        GoblinLabel.setIcon(new ImageIcon(getClass().getResource("goblinAlpha_Left_40x40.png")));
+
 
         while (moving) {
             //movement routine
@@ -105,22 +131,30 @@ public class Goblin extends Sprite implements Runnable {
             int ty = this.y;
             int dir = direction;
 
+
 //            tx += GameProperties.CHARACTER_STEP;
 
-            if (tx > 700 ) {
-               direction = 3;
-            } else if (tx < 200){
+            //TODO Figure out what type of Goblin and based on this set move direction and how far to walk
+            if (tx > 700) {
+                direction = 3;
+                GoblinLabel.setIcon(new ImageIcon(getClass().getResource("goblinAlpha_Left_40x40.png")));
+            } else if (tx < 200) {
                 direction = 4;
+                GoblinLabel.setIcon(new ImageIcon(getClass().getResource("goblinAlpha_Right_40x40.png")));
             }
 
+            //Walk LEFT AND RIGHT
             if (dir == 4) {
-                System.out.println("true");
+//                System.out.println("true");
                 tx += GameProperties.CHARACTER_STEP;
             } else if (dir == 3) {
                 tx -= GameProperties.CHARACTER_STEP;
             } else {
                 tx += GameProperties.CHARACTER_STEP;
             }
+
+            //WALK UP AND DOWN
+
 
             //if character walks off screen
 //            if (tx > GameProperties.SCREEN_WIDTH) {
@@ -142,18 +176,37 @@ public class Goblin extends Sprite implements Runnable {
         }
     }
 
+
+    //METHODS
     private void detectHeroCollision() {
+        int currentHealth = getHealth();
         if (this.r.intersects(heroAlpha.getRectangle())) {
             System.out.println("Boom!");
-            this.moving = false;
+            currentHealth = currentHealth - 50;
+            setHealth(currentHealth);
+            if (currentHealth == 0) {
+                this.moving = false;
+            }
+//            this.moving = false;
 //            animationButton.setText("Run");
-//            TardisLabel.setIcon( new ImageIcon(getClass().getResource("redTardis.png"))  );
-//            DoctorLabel.setIcon( new ImageIcon(getClass().getResource("redDw12.png"))  );
         }
     }
 
-    public void showHeroMemory() {
-        System.out.println(this.heroAlpha);
-    }
+    //SHOW HERO LOCATION IN MEMORY
+//    public void showHeroMemory() {
+//        System.out.println("hero memory in goblin is: " + this.heroAlpha);
+//    }
+
+//    public void move(){
+//        if (x == 700)
+//            right = true;
+//        if (y == 0)
+//            right = false;
+//        if (right)
+//            x--;
+//        else
+//            x++;
+//    }
+
 }
 
