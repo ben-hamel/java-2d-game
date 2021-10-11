@@ -1,30 +1,27 @@
 import java.util.ArrayList;
 
 public class Hero extends Sprite {
-    ArrayList<Arrow> arr_arrowsFlying;
+
     public int direction;
     protected String attackFilename;
-
-//    public ArrayList<Arrow> getArr_arrowsFlying() {
-//        return arr_arrowsFlying;
-//    }
-
-    public int getDirection() {
-        return direction;
-    }
+//    ArrayList<Arrow> arr_arrowsFlying;
 
     public Hero setDirection(int direction) {
         this.direction = direction;
         return this;
     }
 
+    public int getDirection() {
+        return direction;
+    }
+
     public Hero() {
         super(30, 44, "heroAlpha_Down_30x44.png");
-        this.arr_arrowsFlying = new ArrayList<>();
+//        this.arr_arrowsFlying = new ArrayList<>();
         this.direction = 0;
     }
 
-    public void fireArrow(int x, int y, int d) {
+//    public void fireArrow(int x, int y, int d) {
 //        if (d == 1) {
 //            Arrow heroArrow = new Arrow(x, y, d);
 //            heroArrow.setFilename("arrowUp_48x133.png");
@@ -37,7 +34,7 @@ public class Hero extends Sprite {
 ////        Arrow heroArrow = new Arrow(x,y,d);
 ////        arr_arrowsFlying.add(heroArrow);
 //    }
-
+//
 //    public String getAttackFilename() {
 //        return attackFilename;
 //    }
@@ -69,5 +66,12 @@ public class Hero extends Sprite {
 //            System.out.println("Right Arrow");
 //            setAttackFilename("arrowRight_133x48.png");
 //        }
-    }
-}
+//    }
+
+
+//    public void detectWall() {
+//
+//    }
+
+
+}// end of class, don't delete------

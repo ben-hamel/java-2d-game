@@ -4,70 +4,55 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 6106269076155338045L;
 
-    //Hero Vars
+    //---Hero ALPHA
     private Hero heroAlpha;//Hero object
     private JLabel heroLabel;
     private ImageIcon heroImage;
 
-    //Enemy Alpha
+    //---GOBLIN ALPHA
     private Goblin goblinAlpha;
     private JLabel goblinAlphaLabel;
     private ImageIcon goblinAlphaImage;
 
-    //Goblin Beta
+    //---GOBLIN BETA
     private Goblin goblinBeta;
     private JLabel goblinBetaLabel;
     private ImageIcon goblinBetaImage;
 
-    //Wall One
-    private Wall wall1;
-    private JLabel wall1Label;
-    private ImageIcon wall1Image;
-
-    //TIMER
-//    Timer time;
-
+    //--- START BUTTON
     private JButton HideTardisButton, AnimateButton;
 
-    //Container to hold graphics
+    //---Container to hold graphics
     private Container content;
 
-
-    //ARROW STUFF
+    //--ARROWS
 //    ArrayList<Arrow> heroArrows = new ArrayList<Arrow>();
 
-    //Walls
+    //---WALLS
     ArrayList<Wall> arr_WallList = new ArrayList<>();
 
-    //GAME PREP CONSTRUCTOR
+    //---GAME PREP CONSTRUCTOR
     public GamePrep() {
+        //GAME WINDOW
         super("Dungeon Crawler Game");
         setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);
         setResizable(false);
-        //GAME WINDOW
         content = getContentPane();
-        content.setBackground(Color.gray);
+        content.setBackground(Color.gray); //window color
         setLayout(null);
+        //handle closing of program window
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //add key listener and focus window to move chars
         content.addKeyListener(this); //add a key listener
         content.setFocusable(true);//add focus
-
-        //TIMER
-//        time = new Timer(5, this);
-//        time.start();
-
-        //handle closing of program window
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //ASSETS FOR Game - HERO, ENEMIES, ETC
         //HERO ALPHA
@@ -85,7 +70,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         //------ WALL STUFF
         //---- Loop Through Walls to Build Level
-        for (int i = 0; i < GameProperties.arr_WallCoordinates.length; i++) {
+        for (int i = 0; i < LevelOneData.arr_WallCoordinates.length; i++) {
             int x = LevelOneData.arr_WallCoordinates[i][0];
             int y = LevelOneData.arr_WallCoordinates[i][1];
 
@@ -101,12 +86,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
             wallLabel.setLocation(x, y);
             add(wallLabel);
 
-        }
+            arr_WallList.add(wall);
 
-        //Wall Array
-//        Wall myWall = new Wall();
-//        arr_WallList.add(myWall);
-//        arr_WallList.add(new Wall());
+        }
 
 
         //ENEMY ONE
@@ -136,23 +118,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         add(goblinBetaLabel);
 
 
-        //ADD Walls
-//        wall1 = new Wall();
-//        wall1Label = new JLabel();
-//        wall1Image = new ImageIcon(getClass().getResource(wall1.getFilename()));
-//        wall1Label.setIcon(wall1Image);
-//        wall1Label.setSize(wall1.getWidth(), wall1.getHeight());
-//
-//        wall1.setHeroAlpha(heroAlpha); //this passes heroAlpha into goblin1 object
-//        wall1.setX(200);
-//        wall1.setY(200);
-//        wall1Label.setLocation(200, 200);
-//
-////        wall1.setX(wall1Label.getLocation().x);
-////        wall1.setY(wall1Label.getLocation().y);
-//        add(wall1Label);
-
-
         //ANIMATE BUTTON STARTS GAME
         AnimateButton = new JButton("Run");
         AnimateButton.setSize(100, 50);
@@ -171,62 +136,25 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
     }
 
-    //GAME CONTROLLERS
+    //CONTROLS
     public void keyTyped(KeyEvent e) {
     }
 
 
     public void keyPressed(KeyEvent e) {
-//        int dx = heroAlpha.getX();
-//        int dy = heroAlpha.getY();
-//        int direction = heroAlpha.getDirection();
-
+        //-- UP, DOWN, LEFT, RIGHT
         if (e.getKeyCode() == KeyEvent.VK_UP) {
+//            walkLogic(1);
             walkUp();
-//            heroLabel.setIcon(new ImageIcon(getClass().getResource("heroUp-32x48.png")));
-//            heroAlpha.setDirection(1);
-//            dy -= GameProperties.CHARACTER_STEP;
-//
-//            if (dy + heroAlpha.getHeight() < 0) {
-//                dy = GameProperties.SCREEN_HEIGHT;
-//            }
-
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+//            walkLogic(2);
             walkDown();
-//            heroLabel.setIcon(new ImageIcon(getClass().getResource("heroDown_32x48.png")));
-//            heroAlpha.setDirection(2);
-//
-////            dy += GameProperties.CHARACTER_STEP;
-////            if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+//            walkLogic(3);
             walkLeft();
-//            heroLabel.setIcon(new ImageIcon(getClass().getResource("heroLeft_32x48.png")));
-//            heroAlpha.setDirection(3);
-//
-//            dx -= GameProperties.CHARACTER_STEP;
-//            if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
-
-
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+//            walkLogic(4);
             walkRight();
-//            boolean test;
-//            heroLabel.setIcon(new ImageIcon(getClass().getResource("heroRight_32x48.png")));
-//            test = wall1.detectHeroCollision();
-//            heroAlpha.setDirection(4);
-//            if (test == true) {
-//                System.out.println("Wall Boundry!");
-//            } else {
-//                wall1.detectHeroCollision();
-//                dx += GameProperties.CHARACTER_STEP;
-//                wall1.detectHeroCollision();
-//                if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
-//            }
-
-
-//            wall1.detectHeroCollision();
-//            dx += GameProperties.CHARACTER_STEP;
-//            wall1.detectHeroCollision();
-//            if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
         }
 
         // SPACE BAR
@@ -234,63 +162,218 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         }
 
-        // THING CHECKER
+        // Z CHECK SOME DATA
         if (e.getKeyCode() == KeyEvent.VK_Z) {
+            System.out.println(heroAlpha.x);
+            System.out.println(heroAlpha.y);
 
+//            System.out.println(wall);
         }
 
 
     }
 
 
-
-
     public void keyReleased(KeyEvent e) {
     }
 
     public void actionPerformed(ActionEvent e) {
-
-//           wall1.detectHeroCollision();
         goblinAlpha.moveGoblin();
         goblinBeta.moveGoblin();
-//        test2();
-//        test3();
-//        repaint();
-
     }
 
+//    private void walkLogic(int direction) {
+//        boolean collision = false;
+//        int dx = heroAlpha.getX();
+//        int dy = heroAlpha.getY();
+//        int nextUp = heroAlpha.y - GameProperties.CHARACTER_STEP;
+//        int nextDown = heroAlpha.y + GameProperties.CHARACTER_STEP;
+//        int nextRight = heroAlpha.x - GameProperties.CHARACTER_STEP;
+//        int nextLeft = heroAlpha.x + GameProperties.CHARACTER_STEP;
+//        boolean upperWall = false;
+//        boolean downwardWall = false;
+//        boolean leftWall = false;
+//        boolean rightWall = false;
+//
+//
+//        //set hero direction
+//        heroAlpha.setDirection(direction);
+//
+//        //todo when hero direction is set, make setter update filename
+//        heroLabel.setIcon(new ImageIcon(getClass().getResource("heroUp-32x48.png")));
+//
+//        //----New code
+//
+//        //LOOP FOR COLLISON
+//        for (int i = 0; i < arr_WallList.size(); i++) {
+//            Rectangle r = arr_WallList.get(i).r;
+//            int y = arr_WallList.get(i).y;
+//            int x = arr_WallList.get(i).x;
+//
+//            if (heroAlpha.r.intersects(r)) {
+//                collision = true;
+//
+//            }
+//
+//            if (heroAlpha.direction == 1 && (nextUp == y)) {
+//                upperWall = true;
+//
+//                System.out.println("upper Wall" + upperWall);
+//
+//            }
+//
+//            if (heroAlpha.direction == 2 && (nextDown == x)) {
+//                downwardWall = true;
+//                System.out.println("downwardWall" + downwardWall);
+//
+//            }
+//
+//            if (heroAlpha.direction == 3 && (nextLeft == x)) {
+//                leftWall = true;
+//
+//
+//                System.out.println("left Wall" + leftWall);
+//
+//            }
+//
+//            if (heroAlpha.direction == 4 && (nextRight == x)) {
+//                rightWall = true;
+//                System.out.println("right Wall" + rightWall);
+//            }
+//        }//----- end of loop
+//
+//        //WALK Direction
+//
+//        if (collision == true && upperWall == true && heroAlpha.direction == 1) {
+//            System.out.println("hit wall");
+//        } else {
+//            if (heroAlpha.getDirection() == 1) {
+//                dy -= GameProperties.CHARACTER_STEP;
+//                System.out.println("up worked");
+////                if (dy + heroAlpha.getHeight() < 0) {
+////                    dy = GameProperties.SCREEN_HEIGHT;
+//            } else if (heroAlpha.getDirection() == 2) {
+//                dy += GameProperties.CHARACTER_STEP;
+//                System.out.println("down worked");
+////                    if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
+//            } else if (heroAlpha.getDirection() == 3) {
+//                dx -= GameProperties.CHARACTER_STEP;
+//                System.out.println("left worked");
+////                    if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
+//            } else if (heroAlpha.getDirection() == 4) {
+//                dx += GameProperties.CHARACTER_STEP;
+//                System.out.println("right worked");
+////                    if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
+//            }
+//        }
+//
+//
+//        if (collision == true && downwardWall == true && heroAlpha.direction == 2) {
+//            System.out.println("hit wall");
+//        } else {
+//            if (heroAlpha.getDirection() == 1) {
+//                dy -= GameProperties.CHARACTER_STEP;
+//                System.out.println("up worked");
+////                if (dy + heroAlpha.getHeight() < 0) {
+////                    dy = GameProperties.SCREEN_HEIGHT;
+//            } else if (heroAlpha.getDirection() == 2) {
+//                dy += GameProperties.CHARACTER_STEP;
+//                System.out.println("down worked");
+////                    if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
+//            } else if (heroAlpha.getDirection() == 3) {
+//                dx -= GameProperties.CHARACTER_STEP;
+//                System.out.println("left worked");
+////                    if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
+//            } else if (heroAlpha.getDirection() == 4) {
+//                dx += GameProperties.CHARACTER_STEP;
+//                System.out.println("right worked");
+////                    if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
+//            }
+//        }
+//
+//
+//        if (collision == true && leftWall == true && heroAlpha.direction == 3) {
+//            System.out.println("hit wall");
+//        } else {
+//            if (heroAlpha.getDirection() == 1) {
+//                dy -= GameProperties.CHARACTER_STEP;
+//                System.out.println("up worked");
+////                if (dy + heroAlpha.getHeight() < 0) {
+////                    dy = GameProperties.SCREEN_HEIGHT;
+//            } else if (heroAlpha.getDirection() == 2) {
+//                dy += GameProperties.CHARACTER_STEP;
+//                System.out.println("down worked");
+////                    if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
+//            } else if (heroAlpha.getDirection() == 3) {
+//                dx -= GameProperties.CHARACTER_STEP;
+//                System.out.println("left worked");
+////                    if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
+//            } else if (heroAlpha.getDirection() == 4) {
+//                dx += GameProperties.CHARACTER_STEP;
+//                System.out.println("right worked");
+////                    if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
+//            }
+//        }
+//
+//
+//        if (collision == true && rightWall == true && heroAlpha.direction == 4) {
+//            System.out.println("hit wall");
+//        } else {
+//            if (heroAlpha.getDirection() == 1) {
+//                dy -= GameProperties.CHARACTER_STEP;
+//                System.out.println("up worked");
+////                if (dy + heroAlpha.getHeight() < 0) {
+////                    dy = GameProperties.SCREEN_HEIGHT;
+//            } else if (heroAlpha.getDirection() == 2) {
+//                dy += GameProperties.CHARACTER_STEP;
+//                System.out.println("down worked");
+////                    if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
+//            } else if (heroAlpha.getDirection() == 3) {
+//                dx -= GameProperties.CHARACTER_STEP;
+//                System.out.println("left worked");
+////                    if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
+//            } else if (heroAlpha.getDirection() == 4) {
+//                dx += GameProperties.CHARACTER_STEP;
+//                System.out.println("right worked");
+////                    if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
+//            }
+//        }
+//
+//
+//        heroAlpha.setX(dx);
+//        heroAlpha.setY(dy);
+//        heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
+//    }//end of walk logic
 
-    private void test(int x, int y, int d) {
-//        heroAlpha.attack(x, y, d);
-        System.out.println(heroAlpha.getFilename());
-
-    }
-
-    private void test2() {
-//        heroAlpha.attack(x, y, d);
-        System.out.println("TEST");
-
-    }
 
     private void walkUp() {
-        int test;
-        int b;
+        boolean b = false;
         int dx = heroAlpha.getX();
         int dy = heroAlpha.getY();
-        int dr = heroAlpha.getDirection();
+        int currentDirection = heroAlpha.getDirection();
 
-        heroLabel.setIcon(new ImageIcon(getClass().getResource("heroUp-32x48.png")));
+        //current direction
+//        System.out.println("current direction" + currentDirection);
 
+        //set hero direction
         heroAlpha.setDirection(1);
 
-//        b = arr_WallList.get(0).detectHeroCollision();
-//
-        b = 0;
-//
-//        b = wall1.detectHeroCollision();
+        //todo when hero direction is set, make setter update filename
+        heroLabel.setIcon(new ImageIcon(getClass().getResource("heroUp-32x48.png")));
 
-        if (b == 1 && dr == 1) {
-            System.out.println("Wall Boundry!");
+        //----New code
+
+        //This code checks for collision with wall
+        for (int i = 0; i < arr_WallList.size(); i++) {
+            Rectangle r = arr_WallList.get(i).r;
+//            System.out.println(arr_WallList.get(i).r.getBounds());
+            if (r.y + r.height == heroAlpha.y) {
+                b = true;
+            }
+        }
+
+        if (b == true) {
+            System.out.println("hit wall");
         } else {
             dy -= GameProperties.CHARACTER_STEP;
             if (dy + heroAlpha.getHeight() < 0) {
@@ -318,7 +401,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 //        b = arr_WallList.get(0).detectHeroCollision();
         b = 0;
         if (b == 2 && dr == 2) {
-            System.out.println("Wall Boundry!");
+            System.out.println("Wall Boundary!");
         } else {
             dy += GameProperties.CHARACTER_STEP;
             if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
@@ -388,14 +471,5 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
     }
 
+}// end of class, don't delete------
 
-//    private void test3(){
-//        wall1.detectHeroCollision();
-//    }
-
-//    public void paint(Graphics g) {
-//        super.paint(g);
-//        System.out.println("Repainting ");
-//
-//    }
-}
