@@ -347,13 +347,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
 
     private void walkUp() {
-        boolean b = false;
+        boolean collision = false;
         int dx = heroAlpha.getX();
         int dy = heroAlpha.getY();
-        int currentDirection = heroAlpha.getDirection();
-
-        //current direction
-//        System.out.println("current direction" + currentDirection);
 
         //set hero direction
         heroAlpha.setDirection(1);
@@ -366,15 +362,18 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         //This code checks for collision with wall
         for (int i = 0; i < arr_WallList.size(); i++) {
             Rectangle r = arr_WallList.get(i).r;
-//            System.out.println(arr_WallList.get(i).r.getBounds());
-            if (r.y + r.height == heroAlpha.y) {
-                b = true;
+
+            Rectangle ree = heroAlpha.getRectangle();
+            ree.setLocation(dx, dy - 20);
+
+            if (ree.intersects(r)) {
+                dy = (int) r.getMaxY();
+                collision = true;
             }
+
         }
 
-        if (b == true) {
-            System.out.println("hit wall");
-        } else {
+        if (collision == false) {
             dy -= GameProperties.CHARACTER_STEP;
             if (dy + heroAlpha.getHeight() < 0) {
                 dy = GameProperties.SCREEN_HEIGHT;
