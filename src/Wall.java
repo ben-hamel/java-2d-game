@@ -77,28 +77,4 @@ public class Wall {
         this.filename = "wallBlock1_40x40.png";
         this.r = new Rectangle(this.x, this.y, this.width, this.height);
     }
-
-//    public int detectHeroCollision() {
-//        boolean x;
-//        int test = 0;
-//
-//        if (this.r.intersects(heroAlpha.getRectangle()) && heroAlpha.direction == 1) {
-//            test = 1;
-//        }
-//        if (this.r.intersects(heroAlpha.getRectangle()) && heroAlpha.direction == 2) {
-//            test = 2;
-//        }
-//
-//        if (this.r.intersects(heroAlpha.getRectangle()) && heroAlpha.direction == 3) {
-//            test = 3;
-//        }
-//
-//        if (this.r.intersects(heroAlpha.getRectangle()) && heroAlpha.direction == 4) {
-//            test = 4;
-//        }
-//
-//        return test;
-//    }
-
-
 }

@@ -36,7 +36,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 //    ArrayList<Arrow> heroArrows = new ArrayList<Arrow>();
 
     //---WALLS
-    ArrayList<Wall> arr_WallList = new ArrayList<>();
+    public ArrayList<Wall> arr_WallList = new ArrayList<>();
 
     //---GAME PREP CONSTRUCTOR
     public GamePrep() {
@@ -63,13 +63,12 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         heroLabel.setSize(heroAlpha.getWidth(), heroAlpha.getHeight());// set size of the label
 
         //HERO ALPHA COORDINATES ON SCREEN
-        heroAlpha.setX(0);
-        heroAlpha.setY(300);
+        heroAlpha.setX(280);
+        heroAlpha.setY(140);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
         add(heroLabel);
 
-        //------ WALL STUFF
-        //---- Loop Through Walls to Build Level
+        //------ WALL STUFF-----Loop Through Walls to Build Level
         for (int i = 0; i < LevelOneData.arr_WallCoordinates.length; i++) {
             int x = LevelOneData.arr_WallCoordinates[i][0];
             int y = LevelOneData.arr_WallCoordinates[i][1];
@@ -87,7 +86,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
             add(wallLabel);
 
             arr_WallList.add(wall);
-
         }
 
 
@@ -129,7 +127,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
     }
 
-
+    //---MAIN METHOD(Start Game)
     public static void main(String[] args) {
         GamePrep myGame = new GamePrep();
         myGame.setVisible(true);
@@ -139,7 +137,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
     //CONTROLS
     public void keyTyped(KeyEvent e) {
     }
-
 
     public void keyPressed(KeyEvent e) {
         //-- UP, DOWN, LEFT, RIGHT
@@ -166,6 +163,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_Z) {
             System.out.println(heroAlpha.x);
             System.out.println(heroAlpha.y);
+//            heroAlpha.fireArrow();
 
 //            System.out.println(wall);
         }
@@ -173,10 +171,10 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
     }
 
-
     public void keyReleased(KeyEvent e) {
     }
 
+    //start threads
     public void actionPerformed(ActionEvent e) {
         goblinAlpha.moveGoblin();
         goblinBeta.moveGoblin();
@@ -347,8 +345,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
 
     private void walkUp() {
-        boolean collision = false;
-        int dx = heroAlpha.getX();
+//        int dx = heroAlpha.getX();
         int dy = heroAlpha.getY();
 
         //set hero direction
@@ -357,115 +354,119 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         //todo when hero direction is set, make setter update filename
         heroLabel.setIcon(new ImageIcon(getClass().getResource("heroUp-32x48.png")));
 
-        //----New code
+        //set player to new step
+        dy = dy - GameProperties.CHARACTER_STEP;
+        heroAlpha.setY(dy);
 
-        //This code checks for collision with wall
+        //This code checks for collision with wall from new locations
         for (int i = 0; i < arr_WallList.size(); i++) {
             Rectangle r = arr_WallList.get(i).r;
 
-            Rectangle ree = heroAlpha.getRectangle();
-            ree.setLocation(dx, dy - 20);
-
-            if (ree.intersects(r)) {
+            //if collision with hero, set hero to bottom of rectangle
+            if (heroAlpha.r.intersects(r)) {
                 dy = (int) r.getMaxY();
-                collision = true;
             }
+        }//end of for loop
 
+        //if character goes past screen, round-robin
+        if (dy + heroAlpha.getHeight() < 0) {
+            dy = GameProperties.SCREEN_HEIGHT;
         }
 
-        if (collision == false) {
-            dy -= GameProperties.CHARACTER_STEP;
-            if (dy + heroAlpha.getHeight() < 0) {
-                dy = GameProperties.SCREEN_HEIGHT;
-            }
-        }
-
-        heroAlpha.setX(dx);
         heroAlpha.setY(dy);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
 
     }
 
     private void walkDown() {
-//        boolean test;
-        int b;
-        int dx = heroAlpha.getX();
         int dy = heroAlpha.getY();
-        int dr = heroAlpha.getDirection();
 
         heroLabel.setIcon(new ImageIcon(getClass().getResource("heroAlpha_Down_30x44.png")));
         heroAlpha.setDirection(2);
 
-//        b = wall1.detectHeroCollision();
-//        b = arr_WallList.get(0).detectHeroCollision();
-        b = 0;
-        if (b == 2 && dr == 2) {
-            System.out.println("Wall Boundary!");
-        } else {
-            dy += GameProperties.CHARACTER_STEP;
-            if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
-        }
+        //set player to new step
+        dy = dy + GameProperties.CHARACTER_STEP;
+        heroAlpha.setY(dy);
 
-        heroAlpha.setX(dx);
+        //This code checks for collision with wall from new locations
+        for (int i = 0; i < arr_WallList.size(); i++) {
+            Rectangle r = arr_WallList.get(i).r;
+
+            //if collision with hero, set hero to bottom of rectangle
+            if (heroAlpha.r.intersects(r)) {
+                dy = (int) r.getMinY() - heroAlpha.getHeight();
+            }
+        }//end of for loop
+
+        //if character goes past screen, round-robin
+        if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
+
         heroAlpha.setY(dy);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
 
     }
 
     private void walkLeft() {
-//        boolean test;
-        int b;
+
         int dx = heroAlpha.getX();
-        int dy = heroAlpha.getY();
-        int dr = heroAlpha.getDirection();
+        System.out.println("old x" + dx);
 
         heroLabel.setIcon(new ImageIcon(getClass().getResource("heroLeft_32x48.png")));
 
         heroAlpha.setDirection(3);
 
-//        b = wall1.detectHeroCollision();
-//        b = arr_WallList.get(0).detectHeroCollision();
-        b = 0;
+        //move character by game step and set
+        dx -= GameProperties.CHARACTER_STEP;
+        heroAlpha.setX(dx);
 
-        if (b == 3 && dr == 3) {
-            System.out.println("Wall Boundry!");
-        } else {
-            dx -= GameProperties.CHARACTER_STEP;
-            if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
-        }
+        //This code checks for collision with wall from new locations
+        for (int i = 0; i < arr_WallList.size(); i++) {
+            Rectangle r = arr_WallList.get(i).r;
+
+//            System.out.println("r x"+r.getX());
+            //if collision with hero, set hero to bottom of rectangle
+
+            if (r.intersects(heroAlpha.r)) {
+                dx = (int) r.getMaxX();
+                System.out.println("dx new" + dx);
+//                System.out.println("r x"+r.getX());
+            }
+        }//end of for loop
+
+
+        //if character goes past screen, round-robin
+        if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
 
         heroAlpha.setX(dx);
-        heroAlpha.setY(dy);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
 
     }
 
     private void walkRight() {
-        boolean test;
-        int b;
         int dx = heroAlpha.getX();
-        int dy = heroAlpha.getY();
-        int dr = heroAlpha.getDirection();
 
         heroLabel.setIcon(new ImageIcon(getClass().getResource("heroRight_32x48.png")));
-
         heroAlpha.setDirection(4);
 
-//        b = wall1.detectHeroCollision();
-//        b = arr_WallList.get(0).detectHeroCollision();
-        b = 0;
+        //move character by game step and set
+        dx += GameProperties.CHARACTER_STEP;
+        heroAlpha.setX(dx);
 
-        if (b == 4 && dr == 4) {
-            System.out.println("Wall Boundry!");
-        } else {
-//            wall1.detectHeroCollision();
-            dx += GameProperties.CHARACTER_STEP;
-//            wall1.detectHeroCollision();
-            if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
-        }
+        //This code checks for collision with wall from new locations
+        for (int i = 0; i < arr_WallList.size(); i++) {
+            Rectangle r = arr_WallList.get(i).r;
+
+            //if collision with hero, set hero to bottom of rectangle
+            if (r.intersects(heroAlpha.r)) {
+                dx = (int) r.getX() - r.width;
+                System.out.println("interect x" + dx);
+            }
+        }//end of for loop
+
+        //if character goes past screen, round-robin
+        if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
 
         heroAlpha.setX(dx);
-        heroAlpha.setY(dy);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
 
     }

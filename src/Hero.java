@@ -4,7 +4,7 @@ public class Hero extends Sprite {
 
     public int direction;
     protected String attackFilename;
-//    ArrayList<Arrow> arr_arrowsFlying;
+    ArrayList<Arrow> arr_arrowsFlying;
 
     public Hero setDirection(int direction) {
         this.direction = direction;
@@ -21,29 +21,24 @@ public class Hero extends Sprite {
         this.direction = 0;
     }
 
-//    public void fireArrow(int x, int y, int d) {
-//        if (d == 1) {
-//            Arrow heroArrow = new Arrow(x, y, d);
-//            heroArrow.setFilename("arrowUp_48x133.png");
-//            arr_arrowsFlying.add(heroArrow);
-//        } else if (d == 2) {
+    //-----Fire Arrow Method
+    public void fireArrow(int x, int y, int d) {
+        if (d == 1) {
+            Arrow heroArrow = new Arrow(x, y, d);
+            heroArrow.setFilename("arrowUp_48x133.png");
+            arr_arrowsFlying.add(heroArrow);
+
+        } 
+//        else if (d == 2) {
 //            Arrow heroArrow = new Arrow(x, y, d);
 //            heroArrow.setFilename(" heroArrow.setFilename(\"arrowUp_48x133.png\");");
 //            arr_arrowsFlying.add(heroArrow);
 //        }
-////        Arrow heroArrow = new Arrow(x,y,d);
-////        arr_arrowsFlying.add(heroArrow);
-//    }
-//
-//    public String getAttackFilename() {
-//        return attackFilename;
-//    }
-//
-//    public Hero setAttackFilename(String attackFilename) {
-//        this.attackFilename = attackFilename;
-//        return this;
-//    }
-//
+//        Arrow heroArrow = new Arrow(x,y,d);
+//        arr_arrowsFlying.add(heroArrow);
+    }
+
+
 //    public void attack(int x, int y, int d) {
 //        if (direction == 1) {
 //            getDirection();
@@ -69,9 +64,5 @@ public class Hero extends Sprite {
 //    }
 
 
-//    public void detectWall() {
-//
-//    }
 
-
-}// end of class, don't delete------
+}//---end of HERO class
