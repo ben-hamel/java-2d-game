@@ -11,6 +11,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 6106269076155338045L;
 
+    //----- Test Stuff
+    TestData myData;
+
     //---Hero ALPHA
     private Hero heroAlpha;//Hero object
     private JLabel heroLabel;
@@ -33,7 +36,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
     private Container content;
 
     //--ARROWS
-//    ArrayList<Arrow> heroArrows = new ArrayList<Arrow>();
+    public ArrayList<Arrow> arr_HeroArrows;
 
     //---WALLS
     public ArrayList<Wall> arr_WallList = new ArrayList<>();
@@ -67,6 +70,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         heroAlpha.setY(140);
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
         add(heroLabel);
+
+        //--- Hero Arrows----
+//        ArrayList<Arrow> arr_HeroArrows = heroAlpha.arr_arrowsFlying;
 
         //------ WALL STUFF-----Loop Through Walls to Build Level
         for (int i = 0; i < LevelOneData.arr_WallCoordinates.length; i++) {
@@ -156,13 +162,19 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
 
         // SPACE BAR
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-
+            //---Fire Hero Arrow Method
+            heroAlpha.fireArrow();
         }
 
         // Z CHECK SOME DATA
         if (e.getKeyCode() == KeyEvent.VK_Z) {
-//            heroAlpha.fireArrow();
 
+            printArrows();
+            //add Arrows to Frame
+//            for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
+//                add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
+//                SwingUtilities.updateComponentTreeUI(this);
+//            }
         }
 
 
@@ -175,8 +187,16 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
         goblinAlpha.moveGoblin();
         goblinBeta.moveGoblin();
+        heroAlpha.startHeroThread();
     }
 
+    public void printArrows() {
+        //add Arrows to Frame
+        for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
+            add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
+            SwingUtilities.updateComponentTreeUI(this);
+        }
+    }
 
 
     private void walkUp() {
@@ -244,7 +264,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
     private void walkLeft() {
 
         int dx = heroAlpha.getX();
-        System.out.println("old x" + dx);
 
         heroLabel.setIcon(new ImageIcon(getClass().getResource("heroLeft_32x48.png")));
 
@@ -258,13 +277,8 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         for (int i = 0; i < arr_WallList.size(); i++) {
             Rectangle r = arr_WallList.get(i).r;
 
-//            System.out.println("r x"+r.getX());
-            //if collision with hero, set hero to bottom of rectangle
-
             if (r.intersects(heroAlpha.r)) {
                 dx = (int) r.getMaxX();
-                System.out.println("dx new" + dx);
-//                System.out.println("r x"+r.getX());
             }
         }//end of for loop
 
@@ -294,7 +308,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
             //if collision with hero, set hero to bottom of rectangle
             if (r.intersects(heroAlpha.r)) {
                 dx = (int) r.getX() - r.width;
-                System.out.println("interect x" + dx);
             }
         }//end of for loop
 

@@ -111,8 +111,7 @@ public class Goblin extends Sprite implements Runnable {
         }
     }
 
-
-    //Thread Part 2
+    //Thread Part 1
     public void moveGoblin() {
         t = new Thread(this, "Goblin Thread");
         t.start();
@@ -192,21 +191,6 @@ public class Goblin extends Sprite implements Runnable {
         }
     }
 
-    //SHOW HERO LOCATION IN MEMORY
-//    public void showHeroMemory() {
-//        System.out.println("hero memory in goblin is: " + this.heroAlpha);
-//    }
-
-//    public void move(){
-//        if (x == 700)
-//            right = true;
-//        if (y == 0)
-//            right = false;
-//        if (right)
-//            x--;
-//        else
-//            x++;
-//    }
 
 }
 
