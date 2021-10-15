@@ -72,7 +72,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         add(heroLabel);
 
         //--- Hero Arrows----
-//        ArrayList<Arrow> arr_HeroArrows = heroAlpha.arr_arrowsFlying;
+//
 
         //------ WALL STUFF-----Loop Through Walls to Build Level
         for (int i = 0; i < LevelOneData.arr_WallCoordinates.length; i++) {
@@ -170,6 +170,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_Z) {
 
             printArrows();
+            moveArrows();
             //add Arrows to Frame
 //            for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
 //                add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
@@ -189,6 +190,42 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         goblinBeta.moveGoblin();
         heroAlpha.startHeroThread();
     }
+
+    public void moveArrows() {
+        for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
+
+            int arrowY = heroAlpha.arr_arrowsFlying.get(i).getY();
+            int arrowX = heroAlpha.arr_arrowsFlying.get(i).getX();
+            int arrowDirection = heroAlpha.arr_arrowsFlying.get(i).direction;
+            Rectangle arrowR = heroAlpha.arr_arrowsFlying.get(i).r;
+            System.out.println(arrowR);
+
+            switch (arrowDirection) {
+                case 1:
+                    arrowY -= 20;
+                    heroAlpha.arr_arrowsFlying.get(i).setY(arrowY);
+                    break;
+                case 2:
+                    arrowY += 20;
+                    heroAlpha.arr_arrowsFlying.get(i).setY(arrowY);
+
+                    break;
+                case 3:
+                    arrowX -= 20;
+                    heroAlpha.arr_arrowsFlying.get(i).setX(arrowX);
+                    break;
+                case 4:
+                    arrowX += 20;
+                    heroAlpha.arr_arrowsFlying.get(i).setX(arrowX);
+                    break;
+            }
+
+            heroAlpha.arr_arrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
+            SwingUtilities.updateComponentTreeUI(this);
+        }
+
+    }
+
 
     public void printArrows() {
         //add Arrows to Frame

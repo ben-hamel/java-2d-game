@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class Goblin extends Sprite implements Runnable {
     private Boolean visible, moving;
@@ -166,7 +167,7 @@ public class Goblin extends Sprite implements Runnable {
 
             GoblinLabel.setLocation(this.x, this.y);
             this.detectHeroCollision();
-
+            this.detectArrowCollision();
             try {
                 Thread.sleep(200);
             } catch (Exception e) {
@@ -191,6 +192,20 @@ public class Goblin extends Sprite implements Runnable {
         }
     }
 
+    public void detectArrowCollision(){
+        for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
+            Rectangle arrowR = heroAlpha.arr_arrowsFlying.get(i).r;
+            int currentHealth = getHealth();
+            if(this.r.intersects(arrowR)){
+                currentHealth -= 50;
+                setHealth(currentHealth);
+                System.out.println(currentHealth);
+                if (currentHealth == 0) {
+                    this.moving = false;
+                }
+            }
+        }
+    }
 
 }
 

@@ -7,6 +7,7 @@ public class Arrow extends Sprite {
     public int direction;
     public JLabel arrowLabel;
     public ImageIcon arrowImage;
+    boolean visible;
 
 
     //SETTER AND GETTER
@@ -59,6 +60,7 @@ public class Arrow extends Sprite {
         this.y = y;
         this.direction = direction;
 
+
         switch (direction) {
             case 1:
                 setFilename("arrowUp_48x133.png");
@@ -82,6 +84,7 @@ public class Arrow extends Sprite {
                 break;
         }
 
+        // Arrow Graphics
         arrowLabel = new JLabel();
         arrowImage = new ImageIcon(getClass().getResource(getFilename()));
         arrowLabel.setIcon(arrowImage);
