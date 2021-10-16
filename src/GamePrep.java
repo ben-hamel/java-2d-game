@@ -170,7 +170,8 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_Z) {
 
             printArrows();
-            moveArrows();
+//            moveArrows();
+            refreshScreen();
             //add Arrows to Frame
 //            for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
 //                add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
@@ -191,6 +192,11 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         heroAlpha.startHeroThread();
     }
 
+    public void  refreshScreen(){
+//        SwingUtilities.updateComponentTreeUI(this);
+        repaint();
+
+    }
     public void moveArrows() {
         for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
 
@@ -231,9 +237,22 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener {
         //add Arrows to Frame
         for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
             add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
-            SwingUtilities.updateComponentTreeUI(this);
+//            SwingUtilities.updateComponentTreeUI(this);
         }
     }
+
+    public static void removeJLabel(JLabel testLabel){
+        Container parent = testLabel.getParent();
+        parent.remove(testLabel);
+        parent.validate();
+        parent.repaint();
+        System.out.println(parent);
+    }
+
+    public void addJLabel(JLabel testLabel){
+
+    }
+
 
 
     private void walkUp() {

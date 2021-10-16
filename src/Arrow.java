@@ -7,7 +7,7 @@ public class Arrow extends Sprite {
     public int direction;
     public JLabel arrowLabel;
     public ImageIcon arrowImage;
-    boolean visible;
+    private boolean visible;
 
 
     //SETTER AND GETTER
@@ -54,12 +54,21 @@ public class Arrow extends Sprite {
         return this;
     }
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public Arrow setVisible(boolean visible) {
+        this.visible = visible;
+        return this;
+    }
+
     //CONSTRUCTOR
     public Arrow(int x, int y, int direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;
-
+        this.visible = true;
 
         switch (direction) {
             case 1:

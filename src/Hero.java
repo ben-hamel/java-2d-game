@@ -52,9 +52,6 @@ public class Hero extends Sprite implements Runnable{
         int x = getX();
         int y = getY();
 
-        //---Method Tester
-//        System.out.println("fireArrow Method Working");
-
         //create Arrow
         Arrow shotArrow = new Arrow(x, y, dir);
 
