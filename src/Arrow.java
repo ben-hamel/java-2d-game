@@ -70,26 +70,36 @@ public class Arrow extends Sprite {
         this.direction = direction;
         this.visible = true;
 
+
         switch (direction) {
             case 1:
                 setFilename("arrowUp_48x133.png");
                 setWidth(GameProperties.VERTICAL_ARROW_WIDTH);
                 setHeight(GameProperties.VERTICAL_ARROW_HEIGHT);
+                setY(y);
+                setX(x);
+
                 break;
             case 2:
                 setFilename("arrowDown_48x133.png");
                 setWidth(GameProperties.VERTICAL_ARROW_WIDTH);
                 setHeight(GameProperties.VERTICAL_ARROW_HEIGHT);
+                setY(y);
+                setX(x);
                 break;
             case 3:
                 setFilename("arrowLeft_133x48.png");
                 setWidth(GameProperties.HORIZONTAL_ARROW_WIDTH);
                 setHeight(GameProperties.HORIZONTAL_ARROW_HEIGHT);
+                setY(y);
+                setX(x);
                 break;
             case 4:
                 setFilename("arrowRight_133x48.png");
                 setWidth(GameProperties.HORIZONTAL_ARROW_WIDTH);
                 setHeight(GameProperties.HORIZONTAL_ARROW_HEIGHT);
+                setY(y);
+                setX(x);
                 break;
         }
 

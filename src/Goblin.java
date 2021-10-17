@@ -93,6 +93,9 @@ public class Goblin extends Sprite implements Runnable {
 
     public Goblin setHealth(int health) {
         this.health = health;
+        if (health == 0) {
+            setVisible(false);
+        }
         return this;
     }
 
@@ -101,11 +104,13 @@ public class Goblin extends Sprite implements Runnable {
     public Goblin() {
         super(200, 0, 40, 40, "goblinAlpha_Down_40x40.png");
         health = 100;
+        visible = true;
     }
 
     public Goblin(int newX, int newY) {
         super(newX, newY, 40, 40, "goblinAlpha_Down_40x40.png");
         health = 100;
+        visible = true;
         if (newX == 0) {
             setFilename("goblinAlpha_Right_40x40.png");
 
@@ -167,7 +172,7 @@ public class Goblin extends Sprite implements Runnable {
 
             GoblinLabel.setLocation(this.x, this.y);
             this.detectHeroCollision();
-            this.detectArrowCollision();
+//            this.detectArrowCollision();
             try {
                 Thread.sleep(200);
             } catch (Exception e) {
@@ -192,24 +197,26 @@ public class Goblin extends Sprite implements Runnable {
         }
     }
 
-    public void detectArrowCollision(){
-        for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
-            Rectangle arrowR = heroAlpha.arr_arrowsFlying.get(i).r;
-            JLabel laLabel = heroAlpha.arr_arrowsFlying.get(i).arrowLabel;
-            int currentHealth = getHealth();
-            if(this.r.intersects(arrowR)){
-                currentHealth -= 50;
-                setHealth(currentHealth);
-                System.out.println(currentHealth);
-                GamePrep.removeJLabel(laLabel);
-                heroAlpha.arr_arrowsFlying.remove(i);
-
-                if (currentHealth == 0) {
-                    this.moving = false;
-                }
-            }
-        }
-    }
+//    public void detectArrowCollision() {
+//        for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
+//            Rectangle arrowR = heroAlpha.arr_arrowsFlying.get(i).r;
+//            JLabel laLabel = heroAlpha.arr_arrowsFlying.get(i).arrowLabel;
+//            int currentHealth = getHealth();
+//
+//            if (this.r.intersects(arrowR)) {
+//                currentHealth -= 50;
+//                setHealth(currentHealth);
+////                System.out.println(currentHealth);
+////                GamePrep.removeJLabel(laLabel);
+////                heroAlpha.arr_arrowsFlying.remove(i);
+//
+////                if (currentHealth == 0) {
+////                    this.moving = false;
+////
+////                }
+//            }
+//        }
+//    }
 
 }
 

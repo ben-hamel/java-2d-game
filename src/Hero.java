@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.font.GlyphMetrics;
 import java.util.ArrayList;
 
@@ -32,7 +33,6 @@ public class Hero extends Sprite implements Runnable{
         System.out.println("Hero Thread Starter Method");
         heroThread = new Thread(this);
         heroThread.start();
-
     }
 
     public void run(){
@@ -57,7 +57,6 @@ public class Hero extends Sprite implements Runnable{
 
         //Add Arrow to array
         arr_arrowsFlying.add(shotArrow);
-
     }
 
 
