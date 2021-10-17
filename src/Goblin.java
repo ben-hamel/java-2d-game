@@ -10,8 +10,7 @@ public class Goblin extends Sprite implements Runnable {
     private JButton animationButton;
     private int direction;
     private int health;
-    private boolean right;
-
+    GamePrep theGame;
 
     //SETTERS and GETTERS
     public Boolean getVisible() {
@@ -118,9 +117,10 @@ public class Goblin extends Sprite implements Runnable {
     }
 
     //Thread Part 1
-    public void moveGoblin() {
+    public void moveGoblin(GamePrep temp) {
         t = new Thread(this, "Goblin Thread");
         t.start();
+        theGame = temp;
     }
 
     // Thread Part 2
@@ -185,17 +185,23 @@ public class Goblin extends Sprite implements Runnable {
     //METHODS
     private void detectHeroCollision() {
         int currentHealth = getHealth();
-        if (this.r.intersects(heroAlpha.getRectangle())) {
-            System.out.println("Boom!");
-            currentHealth = currentHealth - 50;
-            setHealth(currentHealth);
-            if (currentHealth == 0) {
-                this.moving = false;
-            }
+        if (visible == true) {
+            if (this.r.intersects(heroAlpha.getRectangle())) {
+                currentHealth = currentHealth - GameProperties.HERO_DAMAGE;
+                setHealth(currentHealth);
 //            this.moving = false;
 //            animationButton.setText("Run");
+            }
+        }else {
+            removeGoblinLabel();
         }
     }
+
+    public void removeGoblinLabel() {
+        theGame.remove(getGoblinLabel());
+        setVisible(false);
+    }
+
 
 //    public void detectArrowCollision() {
 //        for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {

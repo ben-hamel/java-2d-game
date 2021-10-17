@@ -14,6 +14,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     //----- Test Stuff
     TestData myData;
 
+    //___GAME SCORE
+    public int gameScore;
+
     //---Hero ALPHA
     private Hero heroAlpha;//Hero object
     private JLabel heroLabel;
@@ -35,11 +38,10 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     //---Container to hold graphics
     private Container content;
 
-    //--ARROWS
-    public ArrayList<Arrow> arr_HeroArrows;
-
-    //---WALLS
+    //--ARRAYLISTS
     public ArrayList<Wall> arr_WallList = new ArrayList<>();
+    ArrayList<Goblin> arr_Goblins = new ArrayList<>();
+
     //Game Thread
     private Thread gameThread;
     private boolean gameOn;
@@ -50,8 +52,12 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         super("Dungeon Crawler Game");
         setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);
         setResizable(false);
+
         content = getContentPane();
         content.setBackground(Color.gray); //window color
+
+
+
         setLayout(null);
         //handle closing of program window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,7 +66,18 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         content.addKeyListener(this); //add a key listener
         content.setFocusable(true);//add focus
 
+
+        //_____ TEST CODE START
+//        PaintHero newHero = new PaintHero(20,500);
+//        MyDrawPanel drawPanel = new MyDrawPanel();
+//        add(drawPanel);
+
+
+        //_____ TEST CODE end
+
         //ASSETS FOR Game - HERO, ENEMIES, ETC
+        //___GAME SCORE
+        gameScore = 0;
         //HERO ALPHA
         heroAlpha = new Hero();//creates hero
         heroLabel = new JLabel();//creates a label to hold hero img
@@ -74,10 +91,8 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
         add(heroLabel);
 
-        //--- Hero Arrows----
-//
 
-        //------ WALL STUFF-----Loop Through Walls to Build Level
+        //------WALL LOOP: Loop Through Walls to Build Level
         for (int i = 0; i < LevelOneData.arr_WallCoordinates.length; i++) {
             int x = LevelOneData.arr_WallCoordinates[i][0];
             int y = LevelOneData.arr_WallCoordinates[i][1];
@@ -98,7 +113,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         }
 
 
-        //ENEMY ONE
+        //Goblin Alpha
         goblinAlpha = new Goblin();
         goblinAlphaLabel = new JLabel();
         goblinAlphaImage = new ImageIcon(getClass().getResource(goblinAlpha.getFilename()));
@@ -110,6 +125,8 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         //GOBLIN 1 COORDINATES THEN ADD TO SCREEN
         goblinAlphaLabel.setLocation(goblinAlpha.getX(), goblinAlpha.getY());
         add(goblinAlphaLabel);
+        arr_Goblins.add(goblinAlpha);
+
 
         //ADD GoblinBeta
         goblinBeta = new Goblin(0, 0);
@@ -123,6 +140,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         //GOBLIN 1 COORDINATES THEN ADD TO SCREEN
         goblinBetaLabel.setLocation(goblinBeta.getX(), goblinBeta.getY());
         add(goblinBetaLabel);
+        arr_Goblins.add(goblinBeta);
 
 
         //ANIMATE BUTTON STARTS GAME
@@ -140,7 +158,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public static void main(String[] args) {
         GamePrep myGame = new GamePrep();
         myGame.setVisible(true);
-
     }
 
     //EVENT LISTENERS START
@@ -166,30 +183,18 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         // SPACE BAR
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             //---Fire Hero Arrow Method
-//            if (gameOn) {
-//                heroAlpha.fireArrow();
-//            }
+            if (gameOn) {
+                heroAlpha.fireArrow();
+            }
 
-            heroAlpha.fireArrow();
-            System.out.println(heroAlpha.arr_arrowsFlying.size());
+//            heroAlpha.fireArrow();
+//            System.out.println(heroAlpha.arr_arrowsFlying.size());
 
         }
 
         // Z CHECK SOME DATA
         if (e.getKeyCode() == KeyEvent.VK_Z) {
 
-//            printArrows();
-//            moveArrows();
-//            refreshScreen();
-            //add Arrows to Frame
-//            for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
-//                add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
-//                SwingUtilities.updateComponentTreeUI(this);
-//            }
-
-            System.out.println(heroAlpha.arr_arrowsFlying.size());
-            heroAlpha.arr_arrowsFlying.remove(0);
-            System.out.println(heroAlpha.arr_arrowsFlying.size());
         }
 
 
@@ -199,11 +204,11 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     }
 
     public void actionPerformed(ActionEvent e) {
-        goblinAlpha.moveGoblin();
-        goblinBeta.moveGoblin();
+        goblinAlpha.moveGoblin(this);
+        goblinBeta.moveGoblin(this);
 //        heroAlpha.startHeroThread();
         startGame();
-
+repaint();
     }
     //---EVENT LISTENERS END
 
@@ -332,82 +337,101 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
     //------------------------------------
     //----METHODS START
-    public void refreshScreen() {
-//        SwingUtilities.updateComponentTreeUI(this);
-        repaint();
-
-    }
+//    public void refreshScreen() {
+////        SwingUtilities.updateComponentTreeUI(this);
+//        repaint();
+//    }
 
     // MOVE ARROWS
-    public void moveArrows() {
-        int arraySize = heroAlpha.arr_arrowsFlying.size();
-
-
-        if (heroAlpha.arr_arrowsFlying.size() > 0) {
-            // for every arrow
-            for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
-                Arrow arrowIndex = heroAlpha.arr_arrowsFlying.get(i);
-//                heroAlpha.arr_arrowsFlying.remove(i);
-                int arrowX = heroAlpha.arr_arrowsFlying.get(i).getX();
-                int arrowY = heroAlpha.arr_arrowsFlying.get(i).getY();
-                int arrowDirection = heroAlpha.arr_arrowsFlying.get(i).getDirection();
-                Rectangle arrowRectangle = heroAlpha.arr_arrowsFlying.get(i).getRectangle();
+    public void arrowLogic() {
+        if (heroAlpha.arr_HeroArrowsFlying.size() > 0) {
+            //LOOP through Arrows Array
+            for (int i = 0; i < heroAlpha.arr_HeroArrowsFlying.size(); i++) {
+                //---VARS
+                int arrowX = heroAlpha.arr_HeroArrowsFlying.get(i).getX();
+                int arrowY = heroAlpha.arr_HeroArrowsFlying.get(i).getY();
+                int arrowDirection = heroAlpha.arr_HeroArrowsFlying.get(i).getDirection();
+                Rectangle arrowRectangle = heroAlpha.arr_HeroArrowsFlying.get(i).getRectangle();
                 boolean collision = false;
-
                 int wallSize = arr_WallList.size();
 
+
+                //---CODE
                 //check Arrow for collision with walls
                 for (int j = 0; j < wallSize; j++) {
                     Rectangle wallRectangle = arr_WallList.get(j).getR();
                     if (wallRectangle.intersects(arrowRectangle)) {
                         collision = true;
+                        System.out.println("wall collision");
                     }
                 }//end of  Wall loop
 
-                //check for goblin intersect
-                if (goblinAlpha.getRectangle().intersects(arrowRectangle) && goblinAlpha.getVisible() == true) {
-                    collision = true;
-                    int health = goblinAlpha.getHealth();
-                    health -= GameProperties.ARROW_Damage;
-                    goblinAlpha.setHealth(health);
+                //GOBLIN LOOP: Check for Goblin Collision
+                for (int k = 0; k < arr_Goblins.size(); k++) {
+                    Rectangle goblinRectangle = arr_Goblins.get(k).getRectangle();
+                    Boolean goblinVisible = arr_Goblins.get(k).getVisible();
+
+
+                    if (goblinRectangle.intersects(arrowRectangle) && goblinVisible == true) {
+                        collision = true;
+                        int health = arr_Goblins.get(k).getHealth();
+                        health -= GameProperties.ARROW_DAMAGE;
+                        arr_Goblins.get(k).setHealth(health);
+                        System.out.println("goblin hit");
+                        System.out.println(health);
+                        System.out.println(goblinVisible);
+                    } else if (goblinVisible == false) {
+                        gameScore += 10;
+                        arr_Goblins.get(k).removeGoblinLabel();
+                        arr_Goblins.remove(k);
+                        System.out.println(gameScore);
+
+                    }
 
                 }
+//                if (goblinAlpha.getRectangle().intersects(arrowRectangle) && goblinAlpha.getVisible() == true) {
+//                    collision = true;
+//                    int health = goblinAlpha.getHealth();
+//                    health -= GameProperties.ARROW_DAMAGE;
+//                    goblinAlpha.setHealth(health);
+//
+//                }
 
-                //if no collision then move the arrow, if collision remove arrow
+                // if collision remove arrow, no collision then move the arrow
                 if (collision == true) {
-                    JLabel targetLabel = heroAlpha.arr_arrowsFlying.get(i).arrowLabel;
+                    System.out.println("collision true");
+                    JLabel targetLabel = heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel;
                     Container parent = targetLabel.getParent();
                     parent.remove(targetLabel);
                     parent.validate();
                     parent.repaint();
-                    heroAlpha.arr_arrowsFlying.remove(i);
-
+                    heroAlpha.arr_HeroArrowsFlying.remove(i);
                 } else {
                     //move arrows
                     switch (arrowDirection) {
                         case 1:
                             arrowY -= GameProperties.ARROW_STEP;
-                            heroAlpha.arr_arrowsFlying.get(i).setY(arrowY);
-                            heroAlpha.arr_arrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).setY(arrowY);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
+                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
                             break;
                         case 2:
                             arrowY += GameProperties.ARROW_STEP;
-                            heroAlpha.arr_arrowsFlying.get(i).setY(arrowY);
-                            heroAlpha.arr_arrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).setY(arrowY);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
+                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
                             break;
                         case 3:
                             arrowX -= GameProperties.ARROW_STEP;
-                            heroAlpha.arr_arrowsFlying.get(i).setX(arrowX);
-                            heroAlpha.arr_arrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).setX(arrowX);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
+                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
                             break;
                         case 4:
                             arrowX += GameProperties.ARROW_STEP;
-                            heroAlpha.arr_arrowsFlying.get(i).setX(arrowX);
-                            heroAlpha.arr_arrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_arrowsFlying.get(i).arrowLabel);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).setX(arrowX);
+                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
+                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
                             break;
                     }
                 }
@@ -417,28 +441,24 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
 
 //        System.out.println(heroAlpha.arr_arrowsFlying.size());
-        SwingUtilities.updateComponentTreeUI(this);
+//        SwingUtilities.updateComponentTreeUI(this);
     }
 
-    //REMOVE LABELS
-    public static void removeJLabel(JLabel testLabel) {
-        Container parent = testLabel.getParent();
-        parent.remove(testLabel);
-        parent.validate();
-        parent.repaint();
-        System.out.println(parent);
-    }
 
     //REMOVE GOBLIN
     public void removeGoblin() {
+//        if (goblinAlpha.getVisible() == false) {
+//            remove(goblinAlphaLabel);
+////            Container parent = goblinAlphaLabel.getParent();
+////            parent.remove(goblinAlphaLabel);
+////            parent.validate();
+////            parent.repaint();
+////            goblinAlpha.r = null;
+////            heroAlpha.arr_arrowsFlying.remove(i);
+//        }
+
         if (goblinAlpha.getVisible() == false) {
-            remove(goblinAlphaLabel);
-//            Container parent = goblinAlphaLabel.getParent();
-//            parent.remove(goblinAlphaLabel);
-//            parent.validate();
-//            parent.repaint();
-//            goblinAlpha.r = null;
-//            heroAlpha.arr_arrowsFlying.remove(i);
+//            goblinAlpha.getGameFrame(this);
         }
     }
 
@@ -454,8 +474,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public void run() {
         System.out.println("game on");
         while (gameOn) {
-            moveArrows();
-            removeGoblin();
+            arrowLogic();
             try {
                 Thread.sleep(GameProperties.GAME_PREP_THREAD_TIME);
                 repaint();
