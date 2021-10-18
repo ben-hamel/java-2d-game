@@ -11,9 +11,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
     private static final long serialVersionUID = 6106269076155338045L;
 
-    //----- Test Stuff
-    TestData myData;
-
     //___GAME SCORE
     public int gameScore;
 
@@ -52,10 +49,8 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         super("Dungeon Crawler Game");
         setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);
         setResizable(false);
-
         content = getContentPane();
         content.setBackground(Color.gray); //window color
-
 
 
         setLayout(null);
@@ -68,9 +63,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
 
         //_____ TEST CODE START
-//        PaintHero newHero = new PaintHero(20,500);
-//        MyDrawPanel drawPanel = new MyDrawPanel();
-//        add(drawPanel);
 
 
         //_____ TEST CODE end
@@ -194,7 +186,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
         // Z CHECK SOME DATA
         if (e.getKeyCode() == KeyEvent.VK_Z) {
-
+//                addWinner();
         }
 
 
@@ -208,7 +200,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         goblinBeta.moveGoblin(this);
 //        heroAlpha.startHeroThread();
         startGame();
-repaint();
+        repaint();
     }
     //---EVENT LISTENERS END
 
@@ -384,7 +376,7 @@ repaint();
                         gameScore += 10;
                         arr_Goblins.get(k).removeGoblinLabel();
                         arr_Goblins.remove(k);
-                        System.out.println(gameScore);
+                        System.out.println("Game Score: " + gameScore);
 
                     }
 
@@ -475,6 +467,16 @@ repaint();
         System.out.println("game on");
         while (gameOn) {
             arrowLogic();
+
+            if (arr_Goblins.size() == 0) {
+                System.out.println("Won the Game");
+                gameOn = false;
+                String playerName = JOptionPane.showInputDialog("Add your Name");
+                getWinner(playerName, gameScore);
+
+            }
+
+
             try {
                 Thread.sleep(GameProperties.GAME_PREP_THREAD_TIME);
                 repaint();
@@ -482,11 +484,26 @@ repaint();
 
             }
         }
-//        moveArrows();
+    }//run() end code block
 
+
+    //THREAD END
+
+
+    //Database Stuff
+    public void getWinner(String name, int score) {
+        System.out.println("Player Name: " + name);
+        System.out.println("Score: " + score);
+
+
+//
+//        String playerName = JOptionPane.showInputDialog("Add your Name");
+//        repaint();
+    }
+
+    public void writeWinnerToDatabase() {
 
     }
-    //THREAD END
 
 
 }// end of class, don't delete------
