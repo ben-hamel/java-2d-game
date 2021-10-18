@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.*;
 import java.util.ArrayList;
 
 
@@ -494,6 +495,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public void getWinner(String name, int score) {
         System.out.println("Player Name: " + name);
         System.out.println("Score: " + score);
+        writeWinnerToDatabase(name, score);
 
 
 //
@@ -501,8 +503,76 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 //        repaint();
     }
 
-    public void writeWinnerToDatabase() {
+    public void writeWinnerToDatabase(String name, int score) {
+        String playerName = name;
+        int playerScore = score;
 
+        //Declare connection and sql statement
+        Connection conn = null;
+        Statement stmt = null;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("Database Driver Loaded");
+
+            String dbURL = "jdbc:sqlite:score.db";
+            conn = DriverManager.getConnection(dbURL);
+
+            if (conn != null) {
+                System.out.println("Connected to database");
+                conn.setAutoCommit(false);
+
+                DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
+                System.out.println("Driver name: " + dm.getDriverName());
+                System.out.println("Driver version: " + dm.getDriverVersion());
+                System.out.println("Product name: " + dm.getDatabaseProductName());
+                System.out.println("Product version: " + dm.getDatabaseProductVersion());
+
+                stmt = conn.createStatement();
+
+                String sql = "CREATE TABLE IF NOT EXISTS SCOREBOARD " +
+                        "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        " NAME TEXT NOT NULL, " +
+                        " SCORE INT NOT NULL) ";
+                stmt.executeUpdate(sql);
+                conn.commit();
+                System.out.println("Table Created Successfully");
+
+                sql = "INSERT INTO SCOREBOARD (NAME, SCORE) VALUES " +
+                        "('" + playerName + "', '" + playerScore + "')";
+                stmt.executeUpdate(sql);
+                conn.commit();
+
+                System.out.println("Display after Inserts: ");
+                ResultSet rs = stmt.executeQuery("SELECT * FROM SCOREBOARD");
+                DisplayRecords(rs);
+                rs.close();
+
+                conn.close();
+            }
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void DisplayRecords(ResultSet rs) throws SQLException {
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            int score = rs.getInt("score");
+
+
+            System.out.println("ID = " + id);
+            System.out.println("name = " + name);
+            System.out.println("score = " + score);
+            System.out.println();
+        }
     }
 
 
