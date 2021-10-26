@@ -9,7 +9,6 @@ public class Hero extends Sprite {
     GamePrep gameFrame;
 
 
-
     //SETTERS AND GETTERS
     public int getDirection() {
         return direction;
@@ -38,24 +37,6 @@ public class Hero extends Sprite {
 
     }
 
-    //-----Thread Code
-//    public void startHeroThread() {
-//        System.out.println("Hero Thread Starter Method");
-//        heroThread = new Thread(this);
-//        heroThread.start();
-//    }
-
-//    public void run(){
-//        System.out.println("Hero Thread running");
-//        try {
-//            Thread.sleep(200);
-//            System.out.println("Hero Thread retriggered");
-//        } catch (Exception e) {
-//
-//        }
-//    }
-
-
     //-----Fire Arrow Method
     public void fireArrow() {
         int dir = getDirection();
@@ -71,5 +52,23 @@ public class Hero extends Sprite {
 
     }
 
+    public void move(int direction) {
+        this.direction = direction;
+
+        switch (this.direction) {
+            case 1:
+                this.y -= GameProperties.CHARACTER_STEP;
+                break;
+            case 2:
+                this.y += GameProperties.CHARACTER_STEP;
+                break;
+            case 3:
+                this.x -= GameProperties.CHARACTER_STEP;
+                break;
+            case 4:
+                this.x += GameProperties.CHARACTER_STEP;
+                break;
+        }
+    }
 
 }//---end of HERO class

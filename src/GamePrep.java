@@ -17,7 +17,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
     //---Hero ALPHA
     private Hero heroAlpha;//Hero object
-    private JLabel heroLabel;
+  public static JLabel heroLabel;
     private ImageIcon heroImage;
 
     //---GOBLIN ALPHA
@@ -160,17 +160,17 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public void keyPressed(KeyEvent e) {
         //-- UP, DOWN, LEFT, RIGHT
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-//            walkLogic(1);
-            walkUp();
+//            walkUp();
+            heroAlpha.move(GameProperties.UP);
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-//            walkLogic(2);
-            walkDown();
+//            walkDown();
+            heroAlpha.move(GameProperties.DOWN);
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-//            walkLogic(3);
-            walkLeft();
+//            walkLeft();
+            heroAlpha.move(GameProperties.LEFT);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//            walkLogic(4);
-            walkRight();
+//            walkRight();
+            heroAlpha.move(GameProperties.RIGHT);
         }
 
         // SPACE BAR
@@ -188,6 +188,8 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         // Z CHECK SOME DATA
         if (e.getKeyCode() == KeyEvent.VK_Z) {
 //                addWinner();
+            makeAJPanel();
+
         }
 
 
@@ -326,14 +328,8 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
 
     }
-    //---WALK LOGIC END
 
-    //------------------------------------
-    //----METHODS START
-//    public void refreshScreen() {
-////        SwingUtilities.updateComponentTreeUI(this);
-//        repaint();
-//    }
+
 
     // MOVE ARROWS
     public void arrowLogic() {
@@ -467,13 +463,18 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public void run() {
         System.out.println("game on");
         while (gameOn) {
+//            int heroX = heroAlpha.getX();
+//            int heroY = heroAlpha.getY();
+
             arrowLogic();
+            heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
 
             if (arr_Goblins.size() == 0) {
                 System.out.println("Won the Game");
                 gameOn = false;
                 String playerName = JOptionPane.showInputDialog("Add your Name");
                 getWinner(playerName, gameScore);
+//                displayScoreboard();
 
             }
 
@@ -530,18 +531,22 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
                 stmt = conn.createStatement();
 
-                String sql = "CREATE TABLE IF NOT EXISTS SCOREBOARD " +
-                        "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        " NAME TEXT NOT NULL, " +
-                        " SCORE INT NOT NULL) ";
-                stmt.executeUpdate(sql);
-                conn.commit();
-                System.out.println("Table Created Successfully");
+                //var for sql code
+                String sql;
 
-                sql = "INSERT INTO SCOREBOARD (NAME, SCORE) VALUES " +
-                        "('" + playerName + "', '" + playerScore + "')";
-                stmt.executeUpdate(sql);
-                conn.commit();
+                //if table doesnt exist, create scoreborad table
+//                sql = "CREATE TABLE IF NOT EXISTS SCOREBOARD " +
+//                        "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                        " NAME TEXT NOT NULL, " +
+//                        " SCORE INT NOT NULL) ";
+//                stmt.executeUpdate(sql);
+//                conn.commit();
+//                System.out.println("Table Created Successfully");
+
+//                sql = "INSERT INTO SCOREBOARD (NAME, SCORE) VALUES " +
+//                        "('" + playerName + "', '" + playerScore + "')";
+//                stmt.executeUpdate(sql);
+//                conn.commit();
 
                 System.out.println("Display after Inserts: ");
                 ResultSet rs = stmt.executeQuery("SELECT * FROM SCOREBOARD");
@@ -573,6 +578,36 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
             System.out.println("score = " + score);
             System.out.println();
         }
+    }
+
+    //todo Figure out how to add to top of components
+    public void makeAJPanel() {
+        this.getContentPane().removeAll();
+
+        JPanel newPanel = new JPanel();
+        newPanel.setLocation(200, 200);
+        newPanel.setBackground(Color.darkGray);
+        newPanel.setSize(300, 300);
+
+        JLabel label = new JLabel("Type Name and Press Enter:");
+        JTextField userName = new JTextField(20);
+
+        newPanel.add(label);
+        newPanel.add(userName);
+        add(newPanel);
+
+        userName.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                System.out.println("The entered text is: " + userName.getText());
+                newPanel.removeAll();
+                revalidate();
+                repaint();
+            }
+        });
+
+        revalidate();
+        repaint();
     }
 
 

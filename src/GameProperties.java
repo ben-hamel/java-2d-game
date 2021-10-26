@@ -6,6 +6,12 @@ public class GameProperties {
 	public static final int SCREEN_HEIGHT = 800;
 	public static final int CHARACTER_STEP = 20;
 
+	//Directions
+	public static final int UP = 1;
+	public static final int DOWN = 2;
+	public static final int LEFT = 3;
+	public static final int RIGHT = 4;
+
 
 	//Hero Alpha
 	public static final String HERO_ALPHA_DOWN_FILENAME = "heroAlpha_Down_30x44.png";
