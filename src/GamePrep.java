@@ -4,12 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.Serial;
 import java.sql.*;
 import java.util.ArrayList;
 
 
 public class GamePrep extends JFrame implements ActionListener, KeyListener, Runnable {
 
+    @Serial
     private static final long serialVersionUID = 6106269076155338045L;
 
     //___GAME SCORE
@@ -17,18 +19,20 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
     //---Hero ALPHA
     private Hero heroAlpha;//Hero object
-  public static JLabel heroLabel;
+    public static JLabel heroLabel;
     private ImageIcon heroImage;
 
+
+
     //---GOBLIN ALPHA
-    private Goblin goblinAlpha;
-    private JLabel goblinAlphaLabel;
-    private ImageIcon goblinAlphaImage;
+//    private Goblin goblinAlpha;
+//    private JLabel goblinAlphaLabel;
+//    private ImageIcon goblinAlphaImage;
 
     //---GOBLIN BETA
-    private Goblin goblinBeta;
-    private JLabel goblinBetaLabel;
-    private ImageIcon goblinBetaImage;
+//    private Goblin goblinBeta;
+//    private JLabel goblinBetaLabel;
+//    private ImageIcon goblinBetaImage;
 
     //--- START BUTTON
     private JButton HideTardisButton, AnimateButton;
@@ -38,7 +42,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
     //--ARRAYLISTS
     public ArrayList<Wall> arr_WallList = new ArrayList<>();
-    ArrayList<Goblin> arr_Goblins = new ArrayList<>();
+    public ArrayList<Goblin> arr_Goblins = new ArrayList<>();
 
     //Game Thread
     private Thread gameThread;
@@ -48,29 +52,22 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public GamePrep() {
         //GAME WINDOW
         super("Dungeon Crawler Game");
-        setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);
-        setResizable(false);
+        setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);// set size of JFrame
+        setResizable(false);// window resize disabled
         content = getContentPane();
-        content.setBackground(Color.gray); //window color
-
-
-        setLayout(null);
-        //handle closing of program window
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        content.setBackground(Color.gray); //JFrame window color
+        setLayout(null);//make null layout in JFrame
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//handle closing of program window
 
         //add key listener and focus window to move chars
         content.addKeyListener(this); //add a key listener
         content.setFocusable(true);//add focus
 
 
-        //_____ TEST CODE START
-
-
-        //_____ TEST CODE end
-
         //ASSETS FOR Game - HERO, ENEMIES, ETC
         //___GAME SCORE
         gameScore = 0;
+
         //HERO ALPHA
         heroAlpha = new Hero();//creates hero
         heroLabel = new JLabel();//creates a label to hold hero img
@@ -105,35 +102,21 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
             arr_WallList.add(wall);
         }
 
+        //Goblins
+        //Instantiate Goblins
+        for(int[] goblins : LevelOneData.arr_GoblinPositions){
+            int x = goblins[0];
+            int y = goblins[1];
+            int direction = goblins[2];
 
-        //Goblin Alpha
-        goblinAlpha = new Goblin();
-        goblinAlphaLabel = new JLabel();
-        goblinAlphaImage = new ImageIcon(getClass().getResource(goblinAlpha.getFilename()));
-        goblinAlphaLabel.setIcon(goblinAlphaImage);
-        goblinAlphaLabel.setSize(goblinAlpha.getWidth(), goblinAlpha.getHeight());
-        goblinAlpha.setGoblinLabel(goblinAlphaLabel);// this passes in label into goblin1 object
-        goblinAlpha.setHeroAlpha(heroAlpha); //this passes heroAlpha into goblin1 object
-        goblinAlpha.setHeroAlphaLabel(heroLabel);// this passes heroAlpha label into goblin 1
-        //GOBLIN 1 COORDINATES THEN ADD TO SCREEN
-        goblinAlphaLabel.setLocation(goblinAlpha.getX(), goblinAlpha.getY());
-        add(goblinAlphaLabel);
-        arr_Goblins.add(goblinAlpha);
+            Goblin goblin = new Goblin(x,y,direction);
 
+            add(goblin.getGoblinLabel());
 
-        //ADD GoblinBeta
-        goblinBeta = new Goblin(0, 0);
-        goblinBetaLabel = new JLabel();
-        goblinBetaImage = new ImageIcon(getClass().getResource(goblinBeta.getFilename()));
-        goblinBetaLabel.setIcon(goblinBetaImage);
-        goblinBetaLabel.setSize(goblinBeta.getWidth(), goblinBeta.getHeight());
-        goblinBeta.setGoblinLabel(goblinBetaLabel);// this passes in label into goblin1 object
-        goblinBeta.setHeroAlpha(heroAlpha); //this passes heroAlpha into goblin1 object
-        goblinBeta.setHeroAlphaLabel(heroLabel);// this passes heroAlpha label into goblin 1
-        //GOBLIN 1 COORDINATES THEN ADD TO SCREEN
-        goblinBetaLabel.setLocation(goblinBeta.getX(), goblinBeta.getY());
-        add(goblinBetaLabel);
-        arr_Goblins.add(goblinBeta);
+            arr_Goblins.add(goblin);
+
+        }
+
 
 
         //ANIMATE BUTTON STARTS GAME
@@ -143,11 +126,11 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         add(AnimateButton);
         AnimateButton.addActionListener(this);
         AnimateButton.setFocusable(false);
-        goblinAlpha.setAnimationButton(AnimateButton);
+//        goblinAlpha.setAnimationButton(AnimateButton);
 
     }
 
-    //---MAIN METHOD(Start Game)
+    //---MAIN METHOD to Start Game
     public static void main(String[] args) {
         GamePrep myGame = new GamePrep();
         myGame.setVisible(true);
@@ -179,17 +162,12 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
             if (gameOn) {
                 heroAlpha.fireArrow();
             }
-
-//            heroAlpha.fireArrow();
-//            System.out.println(heroAlpha.arr_arrowsFlying.size());
-
         }
 
         // Z CHECK SOME DATA
         if (e.getKeyCode() == KeyEvent.VK_Z) {
-//                addWinner();
-            makeAJPanel();
-
+//            goblinAlpha.setFilename(GameProperties.Goblin_UP_IMG);
+            System.out.println(arr_Goblins);
         }
 
 
@@ -199,257 +177,12 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     }
 
     public void actionPerformed(ActionEvent e) {
-        goblinAlpha.moveGoblin(this);
-        goblinBeta.moveGoblin(this);
-//        heroAlpha.startHeroThread();
         startGame();
         repaint();
     }
     //---EVENT LISTENERS END
 
 
-    //---WALK LOGIC START
-    private void walkUp() {
-//        int dx = heroAlpha.getX();
-        int dy = heroAlpha.getY();
-
-        //set hero direction
-        heroAlpha.setDirection(1);
-
-        //todo when hero direction is set, make setter update filename
-        heroLabel.setIcon(new ImageIcon(getClass().getResource("heroUp-32x48.png")));
-
-        //set player to new step
-        dy = dy - GameProperties.CHARACTER_STEP;
-        heroAlpha.setY(dy);
-
-        //This code checks for collision with wall from new locations
-        for (int i = 0; i < arr_WallList.size(); i++) {
-            Rectangle r = arr_WallList.get(i).r;
-
-            //if collision with hero, set hero to bottom of rectangle
-            if (heroAlpha.r.intersects(r)) {
-                dy = (int) r.getMaxY();
-            }
-        }//end of for loop
-
-        //if character goes past screen, round-robin
-        if (dy + heroAlpha.getHeight() < 0) {
-            dy = GameProperties.SCREEN_HEIGHT;
-        }
-
-        heroAlpha.setY(dy);
-        heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
-
-    }
-
-    private void walkDown() {
-        int dy = heroAlpha.getY();
-
-        heroLabel.setIcon(new ImageIcon(getClass().getResource("heroAlpha_Down_30x44.png")));
-        heroAlpha.setDirection(2);
-
-        //set player to new step
-        dy = dy + GameProperties.CHARACTER_STEP;
-        heroAlpha.setY(dy);
-
-        //This code checks for collision with wall from new locations
-        for (int i = 0; i < arr_WallList.size(); i++) {
-            Rectangle r = arr_WallList.get(i).r;
-
-            //if collision with hero, set hero to bottom of rectangle
-            if (heroAlpha.r.intersects(r)) {
-                dy = (int) r.getMinY() - heroAlpha.getHeight();
-            }
-        }//end of for loop
-
-        //if character goes past screen, round-robin
-        if (dy > GameProperties.SCREEN_HEIGHT) dy = -1 * heroAlpha.getHeight();
-
-        heroAlpha.setY(dy);
-        heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
-
-    }
-
-    private void walkLeft() {
-
-        int dx = heroAlpha.getX();
-
-        heroLabel.setIcon(new ImageIcon(getClass().getResource("heroLeft_32x48.png")));
-
-        heroAlpha.setDirection(3);
-
-        //move character by game step and set
-        dx -= GameProperties.CHARACTER_STEP;
-        heroAlpha.setX(dx);
-
-        //This code checks for collision with wall from new locations
-        for (int i = 0; i < arr_WallList.size(); i++) {
-            Rectangle r = arr_WallList.get(i).r;
-
-            if (r.intersects(heroAlpha.r)) {
-                dx = (int) r.getMaxX();
-            }
-        }//end of for loop
-
-
-        //if character goes past screen, round-robin
-        if (dx + heroAlpha.getWidth() < 0) dx = GameProperties.SCREEN_WIDTH;
-
-        heroAlpha.setX(dx);
-        heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
-
-    }
-
-    private void walkRight() {
-        int dx = heroAlpha.getX();
-
-        heroLabel.setIcon(new ImageIcon(getClass().getResource("heroRight_32x48.png")));
-        heroAlpha.setDirection(4);
-
-        //move character by game step and set
-        dx += GameProperties.CHARACTER_STEP;
-        heroAlpha.setX(dx);
-
-        //This code checks for collision with wall from new locations
-        for (int i = 0; i < arr_WallList.size(); i++) {
-            Rectangle r = arr_WallList.get(i).r;
-
-            //if collision with hero, set hero to bottom of rectangle
-            if (r.intersects(heroAlpha.r)) {
-                dx = (int) r.getX() - r.width;
-            }
-        }//end of for loop
-
-        //if character goes past screen, round-robin
-        if (dx > GameProperties.SCREEN_WIDTH) dx = -1 * heroAlpha.getWidth();
-
-        heroAlpha.setX(dx);
-        heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
-
-    }
-
-
-
-    // MOVE ARROWS
-    public void arrowLogic() {
-        if (heroAlpha.arr_HeroArrowsFlying.size() > 0) {
-            //LOOP through Arrows Array
-            for (int i = 0; i < heroAlpha.arr_HeroArrowsFlying.size(); i++) {
-                //---VARS
-                int arrowX = heroAlpha.arr_HeroArrowsFlying.get(i).getX();
-                int arrowY = heroAlpha.arr_HeroArrowsFlying.get(i).getY();
-                int arrowDirection = heroAlpha.arr_HeroArrowsFlying.get(i).getDirection();
-                Rectangle arrowRectangle = heroAlpha.arr_HeroArrowsFlying.get(i).getRectangle();
-                boolean collision = false;
-                int wallSize = arr_WallList.size();
-
-
-                //---CODE
-                //check Arrow for collision with walls
-                for (int j = 0; j < wallSize; j++) {
-                    Rectangle wallRectangle = arr_WallList.get(j).getR();
-                    if (wallRectangle.intersects(arrowRectangle)) {
-                        collision = true;
-                        System.out.println("wall collision");
-                    }
-                }//end of  Wall loop
-
-                //GOBLIN LOOP: Check for Goblin Collision
-                for (int k = 0; k < arr_Goblins.size(); k++) {
-                    Rectangle goblinRectangle = arr_Goblins.get(k).getRectangle();
-                    Boolean goblinVisible = arr_Goblins.get(k).getVisible();
-
-
-                    if (goblinRectangle.intersects(arrowRectangle) && goblinVisible == true) {
-                        collision = true;
-                        int health = arr_Goblins.get(k).getHealth();
-                        health -= GameProperties.ARROW_DAMAGE;
-                        arr_Goblins.get(k).setHealth(health);
-                        System.out.println("goblin hit");
-                        System.out.println(health);
-                        System.out.println(goblinVisible);
-                    } else if (goblinVisible == false) {
-                        gameScore += 10;
-                        arr_Goblins.get(k).removeGoblinLabel();
-                        arr_Goblins.remove(k);
-                        System.out.println("Game Score: " + gameScore);
-
-                    }
-
-                }
-//                if (goblinAlpha.getRectangle().intersects(arrowRectangle) && goblinAlpha.getVisible() == true) {
-//                    collision = true;
-//                    int health = goblinAlpha.getHealth();
-//                    health -= GameProperties.ARROW_DAMAGE;
-//                    goblinAlpha.setHealth(health);
-//
-//                }
-
-                // if collision remove arrow, no collision then move the arrow
-                if (collision == true) {
-                    System.out.println("collision true");
-                    JLabel targetLabel = heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel;
-                    Container parent = targetLabel.getParent();
-                    parent.remove(targetLabel);
-                    parent.validate();
-                    parent.repaint();
-                    heroAlpha.arr_HeroArrowsFlying.remove(i);
-                } else {
-                    //move arrows
-                    switch (arrowDirection) {
-                        case 1:
-                            arrowY -= GameProperties.ARROW_STEP;
-                            heroAlpha.arr_HeroArrowsFlying.get(i).setY(arrowY);
-                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
-                            break;
-                        case 2:
-                            arrowY += GameProperties.ARROW_STEP;
-                            heroAlpha.arr_HeroArrowsFlying.get(i).setY(arrowY);
-                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
-                            break;
-                        case 3:
-                            arrowX -= GameProperties.ARROW_STEP;
-                            heroAlpha.arr_HeroArrowsFlying.get(i).setX(arrowX);
-                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
-                            break;
-                        case 4:
-                            arrowX += GameProperties.ARROW_STEP;
-                            heroAlpha.arr_HeroArrowsFlying.get(i).setX(arrowX);
-                            heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel.setLocation(arrowX, arrowY);
-                            add(heroAlpha.arr_HeroArrowsFlying.get(i).arrowLabel);
-                            break;
-                    }
-                }
-
-            }//end of Arrow loop
-        }
-
-
-//        System.out.println(heroAlpha.arr_arrowsFlying.size());
-//        SwingUtilities.updateComponentTreeUI(this);
-    }
-
-
-    //REMOVE GOBLIN
-    public void removeGoblin() {
-//        if (goblinAlpha.getVisible() == false) {
-//            remove(goblinAlphaLabel);
-////            Container parent = goblinAlphaLabel.getParent();
-////            parent.remove(goblinAlphaLabel);
-////            parent.validate();
-////            parent.repaint();
-////            goblinAlpha.r = null;
-////            heroAlpha.arr_arrowsFlying.remove(i);
-//        }
-
-        if (goblinAlpha.getVisible() == false) {
-//            goblinAlpha.getGameFrame(this);
-        }
-    }
 
     //METHODS END
 
@@ -462,12 +195,84 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
     public void run() {
         System.out.println("game on");
+        //GAME LOOP
         while (gameOn) {
-//            int heroX = heroAlpha.getX();
-//            int heroY = heroAlpha.getY();
+            //TODO MOVE SPRITES
+            //Move Goblins
+            for (Goblin goblin : arr_Goblins) {
+                goblin.move();
+            }
 
-            arrowLogic();
+            //MOVE ARROWS
+            if (heroAlpha.arr_HeroArrowsFlying.size() > 0) {
+                for (Arrow arrow : heroAlpha.arr_HeroArrowsFlying) {
+                    arrow.move();
+                }//end of loop
+            }//end of if
+
+            //CHECK COLLISIONS
+            checkCollision();
+
+
+            // UPDATE GUI
+            //todo set new label locations
+            //hero GUI
+            switch (heroAlpha.getDirection()) {
+                case GameProperties.UP:
+                    heroLabel.setIcon(new ImageIcon(getClass().getResource(GameProperties.HERO_IMG_UP_FILENAME)));
+                    break;
+                case GameProperties.DOWN:
+                    heroLabel.setIcon(new ImageIcon(getClass().getResource(GameProperties.HERO_IMG_DOWN_FILENAME)));
+                    break;
+                case GameProperties.LEFT:
+                    heroLabel.setIcon(new ImageIcon(getClass().getResource(GameProperties.HERO_IMG_LEFT_FILENAME)));
+                    break;
+                case GameProperties.RIGHT:
+                    heroLabel.setIcon(new ImageIcon(getClass().getResource(GameProperties.HERO_IMG_RIGHT_FILENAME)));
+                    break;
+            }
             heroLabel.setLocation(heroAlpha.getX(), heroAlpha.getY());
+
+            //check if goblins exist
+            if (arr_Goblins.size() > 0) {
+                for (Goblin goblin : new ArrayList<>(arr_Goblins)) {
+                    if (goblin.getVisible() == false) {
+                        remove(goblin.getGoblinLabel());
+                        arr_Goblins.remove(goblin);
+                    } else {
+                        switch (goblin.getDirection()) {
+                            case GameProperties.UP:
+                                goblin.getGoblinLabel().setIcon(new ImageIcon(getClass().getResource(GameProperties.Goblin_UP_IMG)));
+                                break;
+                            case GameProperties.DOWN:
+                                goblin.getGoblinLabel().setIcon(new ImageIcon(getClass().getResource(GameProperties.Goblin_DOWN_IMG)));
+                                break;
+                            case GameProperties.LEFT:
+                                goblin.getGoblinLabel().setIcon(new ImageIcon(getClass().getResource(GameProperties.Goblin_LEFT_IMG)));
+                                break;
+                            case GameProperties.RIGHT:
+                                goblin.getGoblinLabel().setIcon(new ImageIcon(getClass().getResource(GameProperties.Goblin_RIGHT_IMG)));
+                                break;
+                        }
+                        goblin.getGoblinLabel().setLocation(goblin.getX(), goblin.getY());
+
+                    }
+                }
+            }
+//
+
+            if (heroAlpha.arr_HeroArrowsFlying.size() > 0) {
+                for (Arrow arrow : new ArrayList<>(heroAlpha.arr_HeroArrowsFlying)) {
+                    if (arrow.isVisible()) {
+                        arrow.arrowLabel.setLocation(arrow.getX(), arrow.getY());
+                        add(arrow.arrowLabel);
+                    } else {
+//                        heroAlpha.arr_HeroArrowsFlying.remove(arrow.arrowLabel);
+                        remove(arrow.arrowLabel);
+                        heroAlpha.arr_HeroArrowsFlying.remove(arrow);
+                    }
+                }// end of loop
+            }
 
             if (arr_Goblins.size() == 0) {
                 System.out.println("Won the Game");
@@ -477,19 +282,209 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 //                displayScoreboard();
 
             }
-
-
+//            repaint();
             try {
                 Thread.sleep(GameProperties.GAME_PREP_THREAD_TIME);
+//                revalidate();
                 repaint();
             } catch (Exception e) {
 
             }
         }
     }//run() end code block
-
-
     //THREAD END
+
+    private void checkCollision() {
+        Rectangle heroBox = heroAlpha.collisionBox();
+        ArrayList<Arrow> arrows = heroAlpha.arr_HeroArrowsFlying;
+
+        //if Hero's visible
+        if (heroAlpha.isVisible()) {
+            //Check if Hero's off-screen
+            offscreenCheck(heroAlpha);
+            //if walls exist,check for wall collisions
+            if (arr_WallList.size() > 0) {
+                for (Wall wall : arr_WallList) {
+                    int direction = heroAlpha.getDirection();
+                    Rectangle wallBoundary = wall.collisionBox();
+
+                    if (heroAlpha.collisionBox().intersects(wallBoundary)) {
+//                        int direction = heroAlpha.getDirection();
+                        //TODO this could be extracted to a method: barrierCheck(Sprite);
+                        switch (direction) {
+                            case GameProperties.UP:
+                                System.out.println("up collision");
+                                heroAlpha.setY(wallBoundary.y + wallBoundary.height);
+                                break;
+                            case GameProperties.DOWN:
+                                System.out.println("Down collision");
+                                heroAlpha.setY(wallBoundary.y - heroAlpha.getHeight());
+                                break;
+                            case GameProperties.LEFT:
+                                System.out.println("LEFT collision");
+                                heroAlpha.setX(wallBoundary.x + wallBoundary.width);
+                                break;
+                            case GameProperties.RIGHT:
+                                System.out.println("Right collision");
+                                heroAlpha.setX(wallBoundary.x - heroAlpha.width);
+                                break;
+                        }
+                    }
+                }
+            }// end of wall check
+
+            //TODO if goblins exists check collision
+
+        }
+
+        //if Goblins exist, check for collision
+        if (arr_Goblins.size() > 0) {
+
+            for (Goblin goblin : arr_Goblins) {
+
+                //check for offscreen collision
+                offscreenCheck(goblin);
+
+                //check for wall collision
+                if (arr_WallList.size() > 0) {
+                    for (Wall wall : arr_WallList) {
+                        checkWallCollision(goblin, wall);
+                    }
+                }// end of wall check
+            }
+        }// end of Goblin collision check
+
+        //Check for Arrow Collisions
+        //if arrows exist
+        if (heroAlpha.arr_HeroArrowsFlying.size() > 0) {
+
+            //check for collision with goblins
+            for (Arrow arrow : heroAlpha.arr_HeroArrowsFlying) {
+                for (Goblin goblin : arr_Goblins) {
+                    if (goblin.collisionBox().intersects(arrow.collisionBox())) {
+                        goblin.lightDamage();
+                        arrow.setVisible(false);
+                    }
+                }
+
+                //check for wall collision
+                if (arr_WallList.size() > 0) {
+                    for (Wall wall : arr_WallList) {
+                        checkWallCollision(arrow, wall);
+                    }
+                }
+            }//end of arrow loop
+        }// end of arrow check
+
+
+    }//end of Collision Method
+
+    //check goblin wall collisions
+    private void checkWallCollision(Goblin goblin, Wall wall) {
+//        int direction = goblin.getDirection();
+        Rectangle wallBoundary = wall.collisionBox();
+
+        if (goblin.collisionBox().intersects(wallBoundary)) {
+//                        int direction = heroAlpha.getDirection();
+            //TODO this could be extracted to a method: barrierCheck(Sprite);
+            switch (goblin.getDirection()) {
+                case GameProperties.UP:
+//                    System.out.println("up collision");
+                    goblin.setY(wallBoundary.y + wallBoundary.height);
+                    goblin.setDirection(GameProperties.DOWN);
+                    break;
+                case GameProperties.DOWN:
+//                    System.out.println("Down collision");
+                    goblin.setY(wallBoundary.y - heroAlpha.getHeight());
+                    goblin.setDirection(GameProperties.UP);
+                    break;
+                case GameProperties.LEFT:
+//                    System.out.println("LEFT collision");
+                    goblin.setX(wallBoundary.x + wallBoundary.width);
+                    goblin.setDirection(GameProperties.RIGHT);
+                    break;
+                case GameProperties.RIGHT:
+//                    System.out.println("Right collision");
+                    goblin.setX(wallBoundary.x - heroAlpha.width);
+                    goblin.setDirection(GameProperties.LEFT);
+                    break;
+            }
+        }
+    }
+
+    //check arrow wall collision
+    private void checkWallCollision(Arrow arrow, Wall wall) {
+        if (arrow.collisionBox().intersects(wall.collisionBox())) {
+            arrow.setVisible(false);
+        }
+    }
+
+    //checks if hero's off-screen
+    private void offscreenCheck(Hero hero) {
+//        int direction = hero.getDirection();
+
+        switch (hero.getDirection()) {
+            case GameProperties.UP:
+                if (hero.getY() < 0) {
+                    hero.setY(0);
+                }
+                break;
+            case GameProperties.DOWN:
+                int actualHeight = this.getContentPane().getSize().height;
+                if (hero.getY() + hero.getHeight() > actualHeight) {
+                    hero.setY(this.getContentPane().getSize().height - heroAlpha.height);
+                    System.out.println("Down collision");
+                }
+                break;
+            case GameProperties.LEFT:
+                if (hero.getX() < GameProperties.SCREEN_X) {
+                    hero.setX(GameProperties.SCREEN_X);
+                }
+                break;
+            case GameProperties.RIGHT:
+                if (hero.getX() + hero.getWidth() >= GameProperties.SCREEN_WIDTH) {
+                    hero.setX(GameProperties.SCREEN_WIDTH - hero.getWidth());
+                }
+                break;
+        }
+
+    }
+
+    //checks if Goblin is off-screen
+    private void offscreenCheck(Goblin goblin) {
+        int direction = goblin.getDirection();
+
+
+        switch (direction) {
+            case GameProperties.UP:
+                if (goblin.getY() < 0) {
+                    goblin.setY(0);
+                    goblin.setDirection(GameProperties.DOWN);
+                }
+                break;
+            case GameProperties.DOWN:
+                int actualHeight = this.getContentPane().getSize().height;
+                if (goblin.getY() + goblin.getHeight() > actualHeight) {
+                    goblin.setY(this.getContentPane().getSize().height - heroAlpha.height);
+                    goblin.setDirection(GameProperties.UP);
+//                    System.out.println("Down collision");
+                }
+                break;
+            case GameProperties.LEFT:
+                if (goblin.getX() < GameProperties.SCREEN_X) {
+                    goblin.setX(GameProperties.SCREEN_X);
+                    goblin.setDirection(GameProperties.RIGHT);
+                }
+                break;
+            case GameProperties.RIGHT:
+                if (goblin.getX() + goblin.getWidth() > GameProperties.SCREEN_WIDTH) {
+                    goblin.setX(GameProperties.SCREEN_WIDTH - goblin.getWidth());
+                    goblin.setDirection(GameProperties.LEFT);
+                }
+                break;
+        }
+
+    }
 
 
     //Database Stuff

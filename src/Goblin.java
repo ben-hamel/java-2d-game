@@ -1,18 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Goblin extends Sprite implements Runnable {
+public class Goblin extends Sprite {
     private Boolean visible, moving;
     private Thread t;
-    private JLabel GoblinLabel;
+    private JLabel goblinLabel;
     private Hero heroAlpha;
     private JLabel heroAlphaLabel;
     private JButton animationButton;
     private int direction;
     private int health;
     GamePrep theGame;
+    private int stepSize;
+    private ImageIcon goblinIcon;
+
+
 
     //SETTERS and GETTERS
+
+
     public Boolean getVisible() {
         return visible;
     }
@@ -22,21 +28,12 @@ public class Goblin extends Sprite implements Runnable {
         return this;
     }
 
-    public Boolean getMoving() {
-        return moving;
-    }
-
-    public Goblin setMoving(Boolean moving) {
-        this.moving = moving;
-        return this;
-    }
-
     public JLabel getGoblinLabel() {
-        return GoblinLabel;
+        return goblinLabel;
     }
 
     public Goblin setGoblinLabel(JLabel goblinLabel) {
-        GoblinLabel = goblinLabel;
+        goblinLabel = goblinLabel;
         return this;
     }
 
@@ -58,19 +55,6 @@ public class Goblin extends Sprite implements Runnable {
         return this;
     }
 
-    public Thread getT() {
-        return t;
-    }
-
-    public Goblin setT(Thread t) {
-        this.t = t;
-        return this;
-    }
-
-
-    public JButton getAnimationButton() {
-        return animationButton;
-    }
 
     public Goblin setAnimationButton(JButton animationButton) {
         this.animationButton = animationButton;
@@ -82,6 +66,20 @@ public class Goblin extends Sprite implements Runnable {
     }
 
     public Goblin setDirection(int direction) {
+        switch (direction) {
+            case GameProperties.UP:
+                this.setFilename(GameProperties.Goblin_UP_IMG);
+                break;
+            case GameProperties.DOWN:
+                this.setFilename(GameProperties.Goblin_DOWN_IMG);
+                break;
+            case GameProperties.LEFT:
+                this.setFilename(GameProperties.Goblin_LEFT_IMG);
+                break;
+            case GameProperties.RIGHT:
+                this.setFilename(GameProperties.Goblin_RIGHT_IMG);
+                break;
+        }
         this.direction = direction;
         return this;
     }
@@ -92,7 +90,7 @@ public class Goblin extends Sprite implements Runnable {
 
     public Goblin setHealth(int health) {
         this.health = health;
-        if (health == 0) {
+        if (health <= 0) {
             setVisible(false);
         }
         return this;
@@ -104,125 +102,82 @@ public class Goblin extends Sprite implements Runnable {
         super(200, 0, 40, 40, "goblinAlpha_Down_40x40.png");
         health = 100;
         visible = true;
+        stepSize = GameProperties.GOBLIN_STEP;
+        direction = 4;
     }
 
     public Goblin(int newX, int newY) {
         super(newX, newY, 40, 40, "goblinAlpha_Down_40x40.png");
         health = 100;
         visible = true;
+        stepSize = GameProperties.GOBLIN_STEP;
+        direction = 1;
         if (newX == 0) {
             setFilename("goblinAlpha_Right_40x40.png");
-
         }
     }
 
-    //Thread Part 1
-    public void moveGoblin(GamePrep temp) {
-        t = new Thread(this, "Goblin Thread");
-        t.start();
-        theGame = temp;
-    }
-
-    // Thread Part 2
-    public void run() {
-        this.moving = true;
-
-//        GoblinLabel.setIcon(new ImageIcon(getClass().getResource("goblinAlpha_Left_40x40.png")));
-
-
-        while (moving) {
-            //movement routine
-            int tx = this.x;
-            int ty = this.y;
-            int dir = direction;
-
-
-//            tx += GameProperties.CHARACTER_STEP;
-
-            //TODO Figure out what type of Goblin and based on this set move direction and how far to walk
-            if (tx > 700) {
-                direction = 3;
-                GoblinLabel.setIcon(new ImageIcon(getClass().getResource("goblinAlpha_Left_40x40.png")));
-            } else if (tx < 200) {
-                direction = 4;
-                GoblinLabel.setIcon(new ImageIcon(getClass().getResource("goblinAlpha_Right_40x40.png")));
-            }
-
-            //Walk LEFT AND RIGHT
-            if (dir == 4) {
-//                System.out.println("true");
-                tx += GameProperties.CHARACTER_STEP;
-            } else if (dir == 3) {
-                tx -= GameProperties.CHARACTER_STEP;
-            } else {
-                tx += GameProperties.CHARACTER_STEP;
-            }
-
-            //WALK UP AND DOWN
-
-
-            //if character walks off screen
-//            if (tx > GameProperties.SCREEN_WIDTH) {
-//                tx = -1 * this.width;
-//            }
-
-
-            this.setX(tx);
-            this.setY(ty);
-
-            GoblinLabel.setLocation(this.x, this.y);
-            this.detectHeroCollision();
-//            this.detectArrowCollision();
-            try {
-                Thread.sleep(200);
-            } catch (Exception e) {
-
-            }
-        }
+    public Goblin(int x, int y, int direction) {
+        super(x, y, 40, 40,GameProperties.Goblin_LEFT_IMG);
+        this.health = GameProperties.FULL_HEALTH;
+        this.visible = true;
+        this.stepSize = GameProperties.GOBLIN_STEP;
+        setDirection(direction);
+        goblinLabel = new JLabel();
+        goblinIcon = new ImageIcon(getClass().getResource(this.filename));
+        goblinLabel.setIcon(goblinIcon);
+        goblinLabel.setSize(this.width,this.height);
+        goblinLabel.setLocation(this.x,this.y);
     }
 
 
     //METHODS
-    private void detectHeroCollision() {
+    public Rectangle collisionBox() {
+        return new Rectangle(x, y, width, height);
+    }
+
+    public void lightDamage() {
         int currentHealth = getHealth();
-        if (visible == true) {
-            if (this.r.intersects(heroAlpha.getRectangle())) {
-                currentHealth = currentHealth - GameProperties.HERO_DAMAGE;
-                setHealth(currentHealth);
-//            this.moving = false;
-//            animationButton.setText("Run");
-            }
-        }else {
-            removeGoblinLabel();
+        currentHealth -= GameProperties.LIGHT_DAMAGE;
+        setHealth(currentHealth);
+        System.out.println("Goblin Damaged: " + health);
+        System.out.println("Goblin Visible" + getVisible());
+    }
+
+    public void move() {
+        int dx = getX();
+        int dy = getY();
+        int dir = getDirection();
+        switch (dir) {
+            case GameProperties.UP:
+                dy -= stepSize;
+                setY(dy);
+//               System.out.println("goblin moved to " +getX() + " and " + getY());
+                break;
+            case GameProperties.DOWN:
+                dy += stepSize;
+                setY(dy);
+//               System.out.println("goblin moved to " +getX() + " and " + getY());
+                break;
+            case GameProperties.LEFT:
+                dx -= stepSize;
+                setX(dx);
+//               System.out.println("goblin moved to " +getX() + " and " + getY());
+                break;
+            case GameProperties.RIGHT:
+                dx += stepSize;
+                setX(dx);
+//               System.out.println("goblin moved to " +getX() + " and " + getY());
+                break;
         }
     }
+
 
     public void removeGoblinLabel() {
         theGame.remove(getGoblinLabel());
         setVisible(false);
     }
 
-
-//    public void detectArrowCollision() {
-//        for (int i = 0; i < heroAlpha.arr_arrowsFlying.size(); i++) {
-//            Rectangle arrowR = heroAlpha.arr_arrowsFlying.get(i).r;
-//            JLabel laLabel = heroAlpha.arr_arrowsFlying.get(i).arrowLabel;
-//            int currentHealth = getHealth();
-//
-//            if (this.r.intersects(arrowR)) {
-//                currentHealth -= 50;
-//                setHealth(currentHealth);
-////                System.out.println(currentHealth);
-////                GamePrep.removeJLabel(laLabel);
-////                heroAlpha.arr_arrowsFlying.remove(i);
-//
-////                if (currentHealth == 0) {
-////                    this.moving = false;
-////
-////                }
-//            }
-//        }
-//    }
 
 }
 

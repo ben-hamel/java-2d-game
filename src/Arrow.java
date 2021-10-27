@@ -8,6 +8,7 @@ public class Arrow extends Sprite {
     public JLabel arrowLabel;
     public ImageIcon arrowImage;
     private boolean visible;
+    private int stepSize;
 
 
     //SETTER AND GETTER
@@ -18,25 +19,29 @@ public class Arrow extends Sprite {
             this.setFilename("arrowUp_48x133.png");
             this.setWidth(48);
             this.setHeight(133);
-//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" + height);
+//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" +
+//            height);
         } else if (direction == 2) {
 //            System.out.println("Down Arrow");
             setFilename("arrowDown_48x133.png");
             setWidth(48);
             setHeight(133);
-//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" + height);
+//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" +
+//            height);
         } else if (direction == 3) {
 //            System.out.println("Left Arrow");
             setFilename("arrowLeft_133x48.png");
             setWidth(133);
             setHeight(48);
-//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" + height);
+//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" +
+//            height);
         } else if (direction == 4) {
 //            System.out.println("Right Arrow");
             setFilename("arrowRight_133x48.png");
             setWidth(133);
             setHeight(48);
-//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" + height);
+//            System.out.println("Arrow cons: x:" + x + ", y:" + y + ", d:" + direction + ", W:" + width + ", H:" +
+//            height);
         }
         return this;
     }
@@ -69,6 +74,7 @@ public class Arrow extends Sprite {
         this.y = y;
         this.direction = direction;
         this.visible = true;
+        this.stepSize = GameProperties.ARROW_STEP;
 
 
         switch (direction) {
@@ -107,8 +113,53 @@ public class Arrow extends Sprite {
         arrowLabel = new JLabel();
         arrowImage = new ImageIcon(getClass().getResource(getFilename()));
         arrowLabel.setIcon(arrowImage);
-        arrowLabel.setSize(this.width,this.height);
-        arrowLabel.setLocation(this.x,this.y);
+        arrowLabel.setSize(this.width, this.height);
+        arrowLabel.setLocation(this.x, this.y);
+    }
+
+    public void move() {
+        int dx = getX();
+        int dy = getY();
+        int dir = getDirection();
+        switch (dir) {
+            case GameProperties.UP:
+//                System.out.println("Arrow moved UP");
+                dy -= stepSize;
+                if (dy <= 0) {
+                    setVisible(false);
+                }
+                setY(dy);
+                break;
+            case GameProperties.DOWN:
+//                System.out.println("Arrow moved Down");
+                dy += stepSize;
+                if (dy >= GameProperties.SCREEN_HEIGHT) {
+                    setVisible(false);
+                }
+                setY(dy);
+                break;
+            case GameProperties.LEFT:
+//                System.out.println("Arrow moved LEFT");
+                dx -= stepSize;
+                if (dx <= 0) {
+                    setVisible(false);
+                }
+                setX(dx);
+                break;
+            case GameProperties.RIGHT:
+//                System.out.println("Arrow moved RIGHT");
+                dx += stepSize;
+                if (dx + width > GameProperties.SCREEN_WIDTH) {
+                    setVisible(false);
+                }
+                setX(dx);
+//                System.out.println("goblin moved to " +getX() + " and " + getY());
+                break;
+        }
+    }
+
+    public Rectangle collisionBox() {
+        return new Rectangle(x, y, width, height);
     }
 
 }

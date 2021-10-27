@@ -77,4 +77,8 @@ public class Wall {
         this.filename = "wallBlock1_40x40.png";
         this.r = new Rectangle(this.x, this.y, this.width, this.height);
     }
+
+    public Rectangle collisionBox(){
+        return new Rectangle(x,y,width,height);
+    }
 }
