@@ -22,18 +22,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public static JLabel heroLabel;
     private ImageIcon heroImage;
 
-
-
-    //---GOBLIN ALPHA
-//    private Goblin goblinAlpha;
-//    private JLabel goblinAlphaLabel;
-//    private ImageIcon goblinAlphaImage;
-
-    //---GOBLIN BETA
-//    private Goblin goblinBeta;
-//    private JLabel goblinBetaLabel;
-//    private ImageIcon goblinBetaImage;
-
     //--- START BUTTON
     private JButton HideTardisButton, AnimateButton;
 
@@ -43,6 +31,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     //--ARRAYLISTS
     public ArrayList<Wall> arr_WallList = new ArrayList<>();
     public ArrayList<Goblin> arr_Goblins = new ArrayList<>();
+    public ArrayList<JLabel> arr_WinnerNameScore = new ArrayList<>();
 
     //Game Thread
     private Thread gameThread;
@@ -82,7 +71,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         add(heroLabel);
 
 
-        //------WALL LOOP: Loop Through Walls to Build Level
+        //------BUILD WALLS: Loop Through Walls to Build Level
         for (int i = 0; i < LevelOneData.arr_WallCoordinates.length; i++) {
             int x = LevelOneData.arr_WallCoordinates[i][0];
             int y = LevelOneData.arr_WallCoordinates[i][1];
@@ -102,21 +91,19 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
             arr_WallList.add(wall);
         }
 
-        //Goblins
+        //BUILD Goblins
         //Instantiate Goblins
-        for(int[] goblins : LevelOneData.arr_GoblinPositions){
+        for (int[] goblins : LevelOneData.arr_GoblinPositions) {
             int x = goblins[0];
             int y = goblins[1];
             int direction = goblins[2];
 
-            Goblin goblin = new Goblin(x,y,direction);
+            Goblin goblin = new Goblin(x, y, direction);
 
             add(goblin.getGoblinLabel());
 
             arr_Goblins.add(goblin);
-
         }
-
 
 
         //ANIMATE BUTTON STARTS GAME
@@ -143,16 +130,12 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
     public void keyPressed(KeyEvent e) {
         //-- UP, DOWN, LEFT, RIGHT
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-//            walkUp();
             heroAlpha.move(GameProperties.UP);
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-//            walkDown();
             heroAlpha.move(GameProperties.DOWN);
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-//            walkLeft();
             heroAlpha.move(GameProperties.LEFT);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//            walkRight();
             heroAlpha.move(GameProperties.RIGHT);
         }
 
@@ -168,6 +151,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         if (e.getKeyCode() == KeyEvent.VK_Z) {
 //            goblinAlpha.setFilename(GameProperties.Goblin_UP_IMG);
             System.out.println(arr_Goblins);
+            makeAJPanel();
         }
 
 
@@ -178,10 +162,9 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
 
     public void actionPerformed(ActionEvent e) {
         startGame();
-        repaint();
+//        repaint();
     }
     //---EVENT LISTENERS END
-
 
 
     //METHODS END
@@ -237,6 +220,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
             if (arr_Goblins.size() > 0) {
                 for (Goblin goblin : new ArrayList<>(arr_Goblins)) {
                     if (goblin.getVisible() == false) {
+                        gameScore += GameProperties.Goblin_KILL_POINT;
                         remove(goblin.getGoblinLabel());
                         arr_Goblins.remove(goblin);
                     } else {
@@ -255,7 +239,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
                                 break;
                         }
                         goblin.getGoblinLabel().setLocation(goblin.getX(), goblin.getY());
-
                     }
                 }
             }
@@ -279,13 +262,10 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
                 gameOn = false;
                 String playerName = JOptionPane.showInputDialog("Add your Name");
                 getWinner(playerName, gameScore);
-//                displayScoreboard();
 
             }
-//            repaint();
             try {
                 Thread.sleep(GameProperties.GAME_PREP_THREAD_TIME);
-//                revalidate();
                 repaint();
             } catch (Exception e) {
 
@@ -298,7 +278,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         Rectangle heroBox = heroAlpha.collisionBox();
         ArrayList<Arrow> arrows = heroAlpha.arr_HeroArrowsFlying;
 
-        //if Hero's visible
+        //if Hero's visible, Check for Collision
         if (heroAlpha.isVisible()) {
             //Check if Hero's off-screen
             offscreenCheck(heroAlpha);
@@ -357,7 +337,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         //Check for Arrow Collisions
         //if arrows exist
         if (heroAlpha.arr_HeroArrowsFlying.size() > 0) {
-
             //check for collision with goblins
             for (Arrow arrow : heroAlpha.arr_HeroArrowsFlying) {
                 for (Goblin goblin : arr_Goblins) {
@@ -405,7 +384,7 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
                     break;
                 case GameProperties.RIGHT:
 //                    System.out.println("Right collision");
-                    goblin.setX(wallBoundary.x - heroAlpha.width);
+                    goblin.setX(wallBoundary.x - goblin.width);
                     goblin.setDirection(GameProperties.LEFT);
                     break;
             }
@@ -492,11 +471,6 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         System.out.println("Player Name: " + name);
         System.out.println("Score: " + score);
         writeWinnerToDatabase(name, score);
-
-
-//
-//        String playerName = JOptionPane.showInputDialog("Add your Name");
-//        repaint();
     }
 
     public void writeWinnerToDatabase(String name, int score) {
@@ -530,18 +504,18 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
                 String sql;
 
                 //if table doesnt exist, create scoreborad table
-//                sql = "CREATE TABLE IF NOT EXISTS SCOREBOARD " +
-//                        "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//                        " NAME TEXT NOT NULL, " +
-//                        " SCORE INT NOT NULL) ";
-//                stmt.executeUpdate(sql);
-//                conn.commit();
-//                System.out.println("Table Created Successfully");
+                sql = "CREATE TABLE IF NOT EXISTS SCOREBOARD " +
+                        "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        " NAME TEXT NOT NULL, " +
+                        " SCORE INT NOT NULL) ";
+                stmt.executeUpdate(sql);
+                conn.commit();
+                System.out.println("Table Created Successfully");
 
-//                sql = "INSERT INTO SCOREBOARD (NAME, SCORE) VALUES " +
-//                        "('" + playerName + "', '" + playerScore + "')";
-//                stmt.executeUpdate(sql);
-//                conn.commit();
+                sql = "INSERT INTO SCOREBOARD (NAME, SCORE) VALUES " +
+                        "('" + playerName + "', '" + playerScore + "')";
+                stmt.executeUpdate(sql);
+                conn.commit();
 
                 System.out.println("Display after Inserts: ");
                 ResultSet rs = stmt.executeQuery("SELECT * FROM SCOREBOARD");
@@ -558,21 +532,29 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        makeAJPanel();
+//        DisplayRecords();
 
     }
 
-    public static void DisplayRecords(ResultSet rs) throws SQLException {
+    public void DisplayRecords(ResultSet rs) throws SQLException {
+
         while (rs.next()) {
             int id = rs.getInt("id");
             String name = rs.getString("name");
             int score = rs.getInt("score");
 
 
+            JLabel winner = new JLabel("Name: " + name + " Score: " + score);
+
+            arr_WinnerNameScore.add(winner);
+
             System.out.println("ID = " + id);
             System.out.println("name = " + name);
             System.out.println("score = " + score);
             System.out.println();
         }
+        scoreBoardJPanel();
     }
 
     //todo Figure out how to add to top of components
@@ -605,6 +587,36 @@ public class GamePrep extends JFrame implements ActionListener, KeyListener, Run
         repaint();
     }
 
+    public void scoreBoardJPanel() {
+        this.getContentPane().removeAll();
+
+        JPanel newPanel = new JPanel();
+        newPanel.setLocation(200, 200);
+        newPanel.setBackground(Color.white);
+        newPanel.setSize(300, 300);
+        newPanel.setLayout(new BoxLayout(newPanel, BoxLayout.PAGE_AXIS));
+
+        for (JLabel label : arr_WinnerNameScore) {
+            newPanel.add(label);
+        }
+//
+//        newPanel.add(label);
+//        newPanel.add(userName);
+        add(newPanel);
+
+//        userName.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent event) {
+//                System.out.println("The entered text is: " + userName.getText());
+//                newPanel.removeAll();
+//                revalidate();
+//                repaint();
+//            }
+//        });
+
+        revalidate();
+        repaint();
+    }
 
 }// end of class, don't delete------
 

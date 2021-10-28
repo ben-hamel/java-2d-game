@@ -2,22 +2,35 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Goblin extends Sprite {
-    private Boolean visible, moving;
-    private Thread t;
-    private JLabel goblinLabel;
-    private Hero heroAlpha;
-    private JLabel heroAlphaLabel;
-    private JButton animationButton;
+    //    private Boolean visible, moving;
     private int direction;
     private int health;
-    GamePrep theGame;
     private int stepSize;
     private ImageIcon goblinIcon;
-
+    private JLabel goblinLabel;
 
 
     //SETTERS and GETTERS
-
+//    public void setX(int x) {
+//        this.x = x;
+//        goblinLabel.setLocation(this.x, this.y);
+//    }
+//
+//    public void setWidth(int width) {
+//        this.width = width;
+//        goblinLabel.setSize(width, this.height);
+//    }
+//
+//    public void setHeight(int height) {
+//
+//
+//    }
+//
+//    public void setY(int y) {
+//        this.y = y;
+//        goblinLabel.setLocation(this.x, this.y);
+//
+//    }
 
     public Boolean getVisible() {
         return visible;
@@ -34,30 +47,6 @@ public class Goblin extends Sprite {
 
     public Goblin setGoblinLabel(JLabel goblinLabel) {
         goblinLabel = goblinLabel;
-        return this;
-    }
-
-    public Hero getHeroAlpha() {
-        return heroAlpha;
-    }
-
-    public Goblin setHeroAlpha(Hero heroAlpha) {
-        this.heroAlpha = heroAlpha;
-        return this;
-    }
-
-    public JLabel getHeroAlphaLabel() {
-        return heroAlphaLabel;
-    }
-
-    public Goblin setHeroAlphaLabel(JLabel temp) {
-        this.heroAlphaLabel = temp;
-        return this;
-    }
-
-
-    public Goblin setAnimationButton(JButton animationButton) {
-        this.animationButton = animationButton;
         return this;
     }
 
@@ -118,16 +107,16 @@ public class Goblin extends Sprite {
     }
 
     public Goblin(int x, int y, int direction) {
-        super(x, y, 40, 40,GameProperties.Goblin_LEFT_IMG);
+        super(x, y, 40, 40, true);
         this.health = GameProperties.FULL_HEALTH;
-        this.visible = true;
+//        this.visible = true;
         this.stepSize = GameProperties.GOBLIN_STEP;
         setDirection(direction);
         goblinLabel = new JLabel();
         goblinIcon = new ImageIcon(getClass().getResource(this.filename));
         goblinLabel.setIcon(goblinIcon);
-        goblinLabel.setSize(this.width,this.height);
-        goblinLabel.setLocation(this.x,this.y);
+        goblinLabel.setSize(this.width, this.height);
+        goblinLabel.setLocation(x, y);
     }
 
 
@@ -171,13 +160,5 @@ public class Goblin extends Sprite {
                 break;
         }
     }
-
-
-    public void removeGoblinLabel() {
-        theGame.remove(getGoblinLabel());
-        setVisible(false);
-    }
-
-
 }
 
