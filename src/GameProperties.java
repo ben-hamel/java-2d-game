@@ -17,7 +17,7 @@ public class GameProperties {
 	public static final int FULL_HEALTH = 100;
 
 	//Damage
-	public static final int LIGHT_DAMAGE = 10;
+	public static final int LIGHT_DAMAGE = 25;
 
 
 	//Hero Alpha
